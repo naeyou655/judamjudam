@@ -6,9 +6,7 @@
   <meta name="description" content="나보다 내 술 취향을 더 잘 아는 공간, 주담주담 가이드">
   <title>주담주담 — Guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -17,18 +15,14 @@
       --ink:#111111;--charcoal:#4A5568;
       --line:rgba(17,17,17,0.10);--line-mid:rgba(17,17,17,0.15);--line-strong:rgba(17,17,17,0.22);
       --serif:'Cormorant Garamond',Georgia,serif;
-      --sans:'Pretendard',-apple-system,sans-serif;
+      --kor:'Nanum Myeongjo','Apple SD Gothic Neo',serif;
+      --sans:'Apple SD Gothic Neo','Noto Sans KR',-apple-system,sans-serif;
       --tab-h:64px;--header-h:56px;
       --safe-bottom:env(safe-area-inset-bottom,0px);
     }
     html,body{height:100%;min-height:100vh;background:#EDEAE2;font-family:var(--sans);color:var(--ink)}
 
-    /* ── APP SHELL ── */
-    #app{
-      width:100%;height:100dvh;min-height:100vh;
-      background:var(--bg);display:flex;flex-direction:column;
-      overflow:hidden;position:relative;
-    }
+    #app{width:100%;height:100dvh;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:relative}
     @media(min-width:768px){
       body{display:flex;align-items:flex-start;justify-content:center}
       #app{width:420px;height:100vh;position:sticky;top:0;box-shadow:1px 0 0 var(--line),-1px 0 0 var(--line);flex-shrink:0}
@@ -40,229 +34,226 @@
     }
     #side-panel{display:none}
 
-    /* ── HEADER ── */
     .header{height:var(--header-h);background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0;z-index:20}
-    .header-brand{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink)}
-    .header-sub{font-size:10px;color:var(--charcoal);letter-spacing:0.1em;font-style:italic;font-family:var(--serif);margin-top:1px}
-    .header-right{display:flex;align-items:center;gap:18px}
-    .header-right i{font-size:21px;color:var(--charcoal);cursor:pointer}
+    .header-brand{font-family:var(--kor);font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-0.5px}
+    .header-sub{font-size:10px;color:var(--charcoal);letter-spacing:0.1em;margin-top:1px}
+    .header-right{display:flex;align-items:center;gap:16px}
+    .header-icon{width:22px;height:22px;cursor:pointer;color:var(--charcoal);display:flex;align-items:center;justify-content:center}
 
-    /* ── SCREENS ── */
     .screen{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;display:none}
     .screen.active{display:block}
     .screen::-webkit-scrollbar{display:none}
 
-    /* ── TAB BAR ── */
-    .tab-bar{
-      height:calc(var(--tab-h) + var(--safe-bottom));
-      padding-bottom:var(--safe-bottom);
-      background:#FFFFFF;border-top:1px solid var(--line-mid);
-      display:flex;align-items:stretch;flex-shrink:0;z-index:20;
-    }
-    .tab-item{
-      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:3px;cursor:pointer;color:rgba(17,17,17,0.32);background:none;border:none;
-      font-family:var(--sans);transition:color 0.18s;user-select:none;
-    }
+    .tab-bar{height:calc(var(--tab-h) + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:#FFFFFF;border-top:1px solid var(--line-mid);display:flex;align-items:stretch;flex-shrink:0;z-index:20}
+    .tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:rgba(17,17,17,0.32);background:none;border:none;font-family:var(--sans);transition:color 0.18s;user-select:none;padding:0}
     .tab-item:hover,.tab-item.active{color:#111111}
-    .tab-item i{font-size:22px;line-height:1;display:block}
-    .tab-item span{font-size:10px;font-weight:500;font-family:var(--sans)}
+    .tab-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+    .tab-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    .tab-label{font-size:10px;font-weight:500;font-family:var(--sans)}
     .tab-dot{width:4px;height:4px;border-radius:50%;background:#111;opacity:0;transition:opacity 0.18s}
     .tab-item.active .tab-dot{opacity:1}
 
-    /* ── SHARED ── */
     .section-head{display:flex;align-items:baseline;justify-content:space-between;padding:22px 22px 14px}
-    .section-label{font-size:10px;letter-spacing:0.18em;color:var(--charcoal);text-transform:uppercase;font-family:var(--serif);font-style:italic}
-    .section-more{font-size:10px;color:var(--charcoal);cursor:pointer;display:flex;align-items:center;gap:3px;font-family:var(--sans)}
+    .section-label{font-size:10px;letter-spacing:0.16em;color:var(--charcoal);text-transform:uppercase;font-family:var(--serif);font-style:italic}
+    .section-more{font-size:10px;color:var(--charcoal);cursor:pointer}
     .divider{height:1px;background:var(--line);margin:0 22px}
     .pb40{padding-bottom:40px}
-    .cta-btn{width:100%;padding:15px;background:var(--ink);color:var(--bg);border:none;font-size:14px;letter-spacing:0.04em;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.15s;margin-top:24px}
-    .cta-btn:active{opacity:0.82}
+    .cta-btn{width:100%;padding:15px;background:var(--ink);color:var(--bg);border:none;font-size:14px;letter-spacing:0.04em;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px}
     .cta-btn:disabled{opacity:0.45;cursor:not-allowed}
-    .cta-outline{width:100%;padding:13px;background:transparent;color:var(--charcoal);border:0.5px solid var(--line-strong);font-size:13px;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;transition:background 0.15s}
-    .cta-outline:active{background:var(--bg-soft)}
+    .cta-outline{width:100%;padding:13px;background:transparent;color:var(--charcoal);border:0.5px solid var(--line-strong);font-size:13px;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px}
 
-    /* ── SKELETON ── */
     .skeleton{background:linear-gradient(90deg,var(--bg-soft) 25%,var(--bg) 50%,var(--bg-soft) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:2px}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-    /* ── TOAST ── */
     #toast{position:absolute;bottom:calc(var(--tab-h) + 16px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;padding:10px 20px;white-space:nowrap;z-index:100;opacity:0;transition:opacity 0.3s;pointer-events:none;font-family:var(--sans)}
     #toast.show{opacity:1}
 
-    /* ── LOGIN MODAL ── */
+    /* LOGIN MODAL */
     #login-modal-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:80;display:none;align-items:flex-end;justify-content:center}
     #login-modal-bg.open{display:flex}
     .login-modal{width:100%;background:var(--bg);padding:32px 24px 48px;position:relative;animation:slideUp 0.28s ease}
     @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-    .lm-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:4px}
-    .lm-sub{font-size:12px;color:var(--charcoal);font-style:italic;font-family:var(--serif);margin-bottom:28px}
-    .lm-label{display:block;font-size:10px;letter-spacing:0.12em;color:var(--charcoal);text-transform:uppercase;margin-bottom:8px}
-    .lm-input{width:100%;padding:13px 14px;border:0.5px solid var(--line-strong);background:var(--white);font-size:14px;font-family:var(--sans);color:var(--ink);outline:none;margin-bottom:14px;transition:border-color 0.15s}
+    .lm-title{font-family:var(--kor);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .lm-sub{font-size:12px;color:var(--charcoal);margin-bottom:28px}
+    .lm-label{display:block;font-size:11px;letter-spacing:0.1em;color:var(--charcoal);text-transform:uppercase;margin-bottom:8px}
+    .lm-input{width:100%;padding:13px 14px;border:0.5px solid var(--line-strong);background:var(--white);font-size:14px;font-family:var(--sans);color:var(--ink);outline:none;margin-bottom:14px}
     .lm-input:focus{border-color:var(--ink)}
-    .lm-btn{width:100%;padding:14px;background:var(--ink);color:var(--bg);border:none;font-size:14px;font-family:var(--sans);letter-spacing:0.04em;cursor:pointer;transition:opacity 0.15s;margin-top:6px}
+    .lm-btn{width:100%;padding:14px;background:var(--ink);color:var(--bg);border:none;font-size:14px;font-family:var(--sans);cursor:pointer;margin-top:6px}
     .lm-btn:disabled{opacity:0.45;cursor:not-allowed}
     .lm-err{font-size:12px;color:#C0392B;margin-top:10px;text-align:center;min-height:18px}
-    .lm-close{position:absolute;top:16px;right:18px;font-size:20px;color:var(--charcoal);cursor:pointer;background:none;border:none}
+    .lm-close{position:absolute;top:16px;right:18px;font-size:20px;color:var(--charcoal);cursor:pointer;background:none;border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
 
-    /* ── USER DROPDOWN ── */
     #user-dropdown{position:absolute;top:calc(var(--header-h) + 4px);right:16px;background:var(--white);border:0.5px solid var(--line-mid);padding:8px 0;z-index:90;display:none;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
     #user-dropdown.open{display:block}
-    .ud-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--ink);cursor:pointer;transition:background 0.12s;font-family:var(--sans)}
+    .ud-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--ink);cursor:pointer;font-family:var(--sans)}
     .ud-item:hover{background:var(--bg-soft)}
-    .ud-item i{font-size:16px;color:var(--charcoal)}
 
-    /* ── HOME ── */
+    /* HOME */
     .hero{background:var(--ink);padding:30px 24px 26px;position:relative;overflow:hidden}
     .hero-eyebrow{font-size:10px;letter-spacing:0.2em;color:rgba(255,255,255,0.4);text-transform:uppercase;font-family:var(--serif);margin-bottom:10px}
-    .hero-title{font-family:var(--serif);font-size:26px;line-height:1.3;color:#fff;font-weight:500;font-style:italic;margin-bottom:8px}
-    .hero-sub{font-size:12px;color:rgba(255,255,255,0.48);line-height:1.7;margin-bottom:22px;font-family:var(--sans)}
-    .hero-cta{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.24);color:#fff;font-size:12px;padding:10px 16px;letter-spacing:0.04em;cursor:pointer;font-family:var(--sans)}
+    .hero-title{font-family:var(--kor);font-size:24px;line-height:1.4;color:#fff;font-weight:700;margin-bottom:8px}
+    .hero-sub{font-size:12px;color:rgba(255,255,255,0.48);line-height:1.7;margin-bottom:22px}
+    .hero-cta{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.24);color:#fff;font-size:12px;padding:10px 16px;cursor:pointer;font-family:var(--sans)}
     .hero-bottle{position:absolute;right:22px;top:50%;transform:translateY(-50%);opacity:0.12}
-    .weekly-card{margin:0 22px 10px;background:var(--white);border:0.5px solid var(--line-mid);padding:16px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:background 0.15s}
+    .weekly-card{margin:0 22px 10px;background:var(--white);border:0.5px solid var(--line-mid);padding:16px;display:flex;gap:14px;align-items:center;cursor:pointer}
     .weekly-card:active{background:var(--bg-soft)}
     .weekly-dot{width:38px;height:38px;border-radius:50%;background:var(--charcoal);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff}
-    .weekly-dot i{font-size:17px}
     .weekly-info{flex:1}
-    .weekly-day{font-size:9px;letter-spacing:0.14em;color:var(--charcoal);margin-bottom:3px;text-transform:uppercase;font-family:var(--sans)}
-    .weekly-name{font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.3;color:var(--ink);margin-bottom:3px}
-    .weekly-tag{font-size:11px;color:var(--charcoal);font-family:var(--sans)}
+    .weekly-day{font-size:9px;letter-spacing:0.14em;color:var(--charcoal);margin-bottom:3px;text-transform:uppercase}
+    .weekly-name{font-family:var(--kor);font-size:14px;font-weight:700;line-height:1.4;color:var(--ink);margin-bottom:3px}
+    .weekly-tag{font-size:11px;color:var(--charcoal)}
     .article-scroll{display:flex;gap:12px;padding:0 22px 28px;overflow-x:auto;-webkit-overflow-scrolling:touch}
     .article-scroll::-webkit-scrollbar{display:none}
     .article-card{flex-shrink:0;width:158px;cursor:pointer}
-    .article-thumb{width:100%;height:100px;background:var(--bg-soft);border:0.5px solid var(--line-mid);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+    .article-thumb{width:100%;height:100px;background:var(--bg-soft);border:0.5px solid var(--line-mid);display:flex;align-items:center;justify-content:center;margin-bottom:10px;overflow:hidden}
+    .article-thumb img{width:100%;height:100%;object-fit:cover}
     .article-cat{font-size:9px;letter-spacing:0.14em;color:var(--charcoal);text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:4px}
-    .article-name{font-family:var(--serif);font-size:14px;font-weight:500;line-height:1.35;color:var(--ink);margin-bottom:6px}
-    .article-meta{font-size:10px;color:var(--charcoal);font-family:var(--sans)}
+    .article-name{font-family:var(--kor);font-size:13px;font-weight:700;line-height:1.4;color:var(--ink);margin-bottom:6px}
+    .article-meta{font-size:10px;color:var(--charcoal)}
 
-    /* ── TASTE ── */
+    /* TASTE */
     .taste-wrap{padding:26px 22px}
     .step-indicator{display:flex;gap:6px;margin-bottom:26px}
     .step-pip{flex:1;height:2px;background:var(--line-strong);transition:background 0.3s}
-    .step-pip.done{background:var(--ink)}
-    .step-pip.active{background:var(--charcoal)}
+    .step-pip.done{background:var(--ink)}.step-pip.active{background:var(--charcoal)}
     .step-eyebrow{font-size:10px;letter-spacing:0.16em;color:var(--charcoal);text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:8px}
-    .step-q{font-family:var(--serif);font-size:26px;font-weight:500;line-height:1.25;color:var(--ink);margin-bottom:26px}
-    .hint-box{font-size:12px;color:var(--charcoal);line-height:1.7;padding:13px 16px;background:var(--bg-soft);border-left:2px solid var(--charcoal);margin-bottom:24px;font-family:var(--sans)}
+    .step-q{font-family:var(--kor);font-size:24px;font-weight:700;line-height:1.35;color:var(--ink);margin-bottom:26px}
+    .hint-box{font-size:12px;color:var(--charcoal);line-height:1.7;padding:13px 16px;background:var(--bg-soft);border-left:2px solid var(--charcoal);margin-bottom:24px}
     .chip-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
-    .chip{padding:9px 18px;border:0.5px solid var(--line-strong);font-size:13px;cursor:pointer;color:var(--ink);background:transparent;font-family:var(--sans);transition:all 0.15s}
+    .chip{padding:9px 18px;border:0.5px solid var(--line-strong);font-size:13px;cursor:pointer;color:var(--ink);background:transparent;font-family:var(--sans)}
     .chip.selected{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-    .mood-chip{width:100%;padding:14px 18px;border:0.5px solid var(--line-strong);font-size:14px;cursor:pointer;color:var(--ink);background:transparent;font-family:var(--sans);display:flex;align-items:center;justify-content:space-between;transition:all 0.15s;margin-bottom:8px}
+    .mood-chip{width:100%;padding:14px 18px;border:0.5px solid var(--line-strong);font-size:14px;cursor:pointer;color:var(--ink);background:transparent;font-family:var(--sans);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
     .mood-chip.selected{background:var(--ink);color:var(--bg);border-color:var(--ink)}
     .slider-group{margin-bottom:22px}
     .slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-    .slider-name{font-size:14px;font-weight:500;color:var(--ink);font-family:var(--sans)}
+    .slider-name{font-size:14px;font-weight:500;color:var(--ink)}
     .slider-val{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--charcoal)}
     input[type=range]{-webkit-appearance:none;width:100%;height:1px;background:var(--line-strong);outline:none;cursor:pointer}
     input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--ink);cursor:pointer}
-    .slider-ends{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--charcoal);font-family:var(--sans)}
+    .slider-ends{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--charcoal)}
     .result-header{background:var(--bg-soft);padding:22px 22px 18px;border-bottom:1px solid var(--line)}
     .result-eyebrow{font-size:10px;letter-spacing:0.18em;color:var(--charcoal);text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:6px}
-    .result-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:4px}
-    .result-for{font-size:12px;color:var(--charcoal);font-style:italic;font-family:var(--serif)}
+    .result-title{font-family:var(--kor);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .result-for{font-size:12px;color:var(--charcoal)}
     .result-body{padding:20px 22px}
     .pick-card{border:0.5px solid var(--line-mid);background:var(--white);padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
     .pick-num{font-family:var(--serif);font-size:11px;color:var(--charcoal);letter-spacing:0.1em;font-style:italic;flex-shrink:0;line-height:1.4}
     .pick-info{flex:1}
-    .pick-cat{font-size:9px;letter-spacing:0.14em;color:var(--charcoal);margin-bottom:4px;text-transform:uppercase;font-family:var(--sans)}
-    .pick-name{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink);margin-bottom:5px;line-height:1.2}
+    .pick-cat{font-size:9px;letter-spacing:0.14em;color:var(--charcoal);margin-bottom:4px;text-transform:uppercase}
+    .pick-name{font-family:var(--kor);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.3}
     .pick-comment{font-family:var(--serif);font-size:13px;color:var(--ink);line-height:1.6;font-style:italic}
     .pick-icon{width:38px;flex-shrink:0;display:flex;justify-content:center}
     .insta-link{padding:14px 16px;background:var(--bg-soft);border:0.5px solid var(--line-mid);font-size:12px;color:var(--charcoal);font-style:italic;font-family:var(--serif);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
 
-    /* ── PAIRING ── */
+    /* PAIRING */
     .pairing-head{padding:22px 22px 14px}
+    .pairing-head-title{font-family:var(--kor);font-size:20px;font-weight:700;line-height:1.35;margin-bottom:4px}
+    .pairing-head-sub{font-size:12px;color:var(--charcoal)}
     .food-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-mid)}
     .food-cell{background:var(--bg);padding:18px 16px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-height:96px;transition:background 0.2s}
     .food-cell.active{background:var(--ink)}
-    .food-cell.active .fc-icon,.food-cell.active .fc-label{color:rgba(255,255,255,0.9)}
+    .food-cell.active .fc-icon-wrap svg{stroke:rgba(255,255,255,0.8)}
+    .food-cell.active .fc-label,.food-cell.active .fc-sub{color:rgba(255,255,255,0.9)}
     .food-cell.active .fc-sub{color:rgba(255,255,255,0.5)}
-    .fc-icon{font-size:24px;color:var(--charcoal);transition:color 0.2s;line-height:1;display:block}
-    .fc-label{font-family:var(--serif);font-size:14px;font-weight:500;color:var(--ink);transition:color 0.2s;line-height:1.2}
-    .fc-sub{font-size:10px;color:var(--charcoal);font-style:italic;font-family:var(--sans);transition:color 0.2s}
+    .fc-icon-wrap{width:26px;height:26px;flex-shrink:0}
+    .fc-icon-wrap svg{width:24px;height:24px;stroke:var(--charcoal);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s}
+    .fc-label{font-family:var(--kor);font-size:13px;font-weight:700;color:var(--ink);transition:color 0.2s;line-height:1.3}
+    .fc-sub{font-size:10px;color:var(--charcoal);font-style:italic;transition:color 0.2s}
     .pairing-result{background:var(--ink);padding:24px 22px;color:#fff;display:none}
     .pr-eyebrow{font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,0.4);text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:8px}
-    .pr-food{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px;font-family:var(--sans)}
-    .pr-match{font-family:var(--serif);font-size:30px;font-weight:600;color:#fff;line-height:1.15;margin-bottom:14px}
+    .pr-food{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px}
+    .pr-match{font-family:var(--kor);font-size:26px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:14px}
     .pr-attrs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-    .pr-attr{font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.42);padding:4px 10px;border:0.5px solid rgba(255,255,255,0.18);font-family:var(--sans)}
+    .pr-attr{font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.42);padding:4px 10px;border:0.5px solid rgba(255,255,255,0.18)}
     .pr-why{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.75;font-style:italic;font-family:var(--serif)}
 
-    /* ── BLOG ── */
+    /* BLOG */
     .blog-cats{display:flex;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch}
     .blog-cats::-webkit-scrollbar{display:none}
-    .blog-cat{padding:13px 16px;font-size:12px;color:var(--charcoal);white-space:nowrap;cursor:pointer;border:none;border-bottom:1.5px solid transparent;margin-bottom:-1px;font-family:var(--sans);background:none;transition:all 0.15s}
+    .blog-cat{padding:13px 16px;font-size:12px;color:var(--charcoal);white-space:nowrap;cursor:pointer;border:none;border-bottom:1.5px solid transparent;margin-bottom:-1px;font-family:var(--sans);background:none}
     .blog-cat.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
-    .blog-hero{padding:24px 22px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:background 0.15s}
+    .blog-hero{padding:24px 22px 20px;border-bottom:1px solid var(--line);cursor:pointer}
     .blog-hero:active{background:var(--bg-soft)}
     .blog-hero-thumb{width:100%;height:166px;background:var(--bg-soft);border:0.5px solid var(--line-mid);display:flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden}
+    .blog-hero-thumb img{width:100%;height:100%;object-fit:cover}
     .blog-hero-meta{font-size:9px;letter-spacing:0.16em;color:var(--charcoal);text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:8px}
-    .blog-hero-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px}
-    .blog-hero-excerpt{font-size:12px;color:var(--charcoal);line-height:1.75;margin-bottom:14px;font-family:var(--sans)}
-    .blog-hero-footer{display:flex;justify-content:space-between;font-size:11px;color:var(--charcoal);font-family:var(--sans)}
-    .blog-row{display:flex;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line);cursor:pointer;transition:background 0.15s}
+    .blog-hero-title{font-family:var(--kor);font-size:20px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:8px}
+    .blog-hero-excerpt{font-size:12px;color:var(--charcoal);line-height:1.75;margin-bottom:14px}
+    .blog-hero-footer{display:flex;justify-content:space-between;font-size:11px;color:var(--charcoal)}
+    .blog-row{display:flex;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line);cursor:pointer}
     .blog-row:active{background:var(--bg-soft)}
     .blog-row-thumb{width:74px;height:74px;background:var(--bg-soft);border:0.5px solid var(--line-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .blog-row-thumb img{width:100%;height:100%;object-fit:cover}
     .blog-row-info{flex:1}
     .blog-row-cat{font-size:9px;color:var(--charcoal);letter-spacing:0.14em;text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:4px}
-    .blog-row-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:6px}
-    .blog-row-meta{font-size:11px;color:var(--charcoal);font-family:var(--sans)}
+    .blog-row-title{font-family:var(--kor);font-size:14px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:6px}
+    .blog-row-meta{font-size:11px;color:var(--charcoal)}
 
-    /* ── ARTICLE DETAIL ── */
+    /* ARTICLE DETAIL */
     #article-detail{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:50;display:none;flex-direction:column;overflow:hidden}
     #article-detail.open{display:flex}
     .detail-header{height:var(--header-h);background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0}
     .detail-back{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--charcoal);cursor:pointer;font-family:var(--sans);background:none;border:none}
-    .detail-back i{font-size:18px}
-    .detail-body-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-    .detail-body-scroll::-webkit-scrollbar{display:none}
+    .detail-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .detail-scroll::-webkit-scrollbar{display:none}
     .detail-thumb{width:100%;height:220px;background:var(--ink);display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .detail-thumb img{width:100%;height:100%;object-fit:cover}
     .detail-content{padding:28px 22px 60px}
     .detail-cat{font-size:10px;letter-spacing:0.18em;color:var(--charcoal);text-transform:uppercase;font-style:italic;font-family:var(--serif);margin-bottom:12px}
-    .detail-title{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:16px}
+    .detail-title{font-family:var(--kor);font-size:26px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:16px}
     .detail-byline{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:24px}
-    .detail-avatar{width:32px;height:32px;border-radius:50%;background:var(--charcoal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-family:var(--serif);font-style:italic;flex-shrink:0}
-    .detail-author{font-size:13px;font-weight:500;color:var(--ink);font-family:var(--sans)}
-    .detail-date{font-size:11px;color:var(--charcoal);font-family:var(--sans)}
+    .detail-avatar{width:32px;height:32px;border-radius:50%;background:var(--charcoal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-family:var(--kor);font-weight:700;flex-shrink:0}
+    .detail-author{font-size:13px;font-weight:500;color:var(--ink)}
+    .detail-date{font-size:11px;color:var(--charcoal)}
     .detail-readtime{font-size:11px;color:var(--charcoal);padding:4px 10px;border:0.5px solid var(--line-strong);font-style:italic;font-family:var(--serif)}
-    .detail-lead{font-family:var(--serif);font-size:17px;font-weight:500;line-height:1.7;color:var(--ink);margin-bottom:24px;font-style:italic}
-    .detail-section-title{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.3}
-    .detail-body-text{font-size:14px;line-height:1.85;color:var(--ink);font-family:var(--sans);margin-bottom:20px}
-    .detail-divider{height:1px;background:var(--line-strong);margin:28px 0}
-    .detail-pull-quote{padding:20px 20px 20px 18px;border-left:3px solid var(--ink);background:var(--bg-soft);margin:28px 0}
-    .detail-pull-quote p{font-family:var(--serif);font-size:18px;font-style:italic;line-height:1.6;color:var(--ink)}
-    .detail-pull-quote cite{font-size:11px;color:var(--charcoal);font-style:normal;display:block;margin-top:8px;font-family:var(--sans);letter-spacing:0.08em}
-    .detail-tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:32px}
-    .detail-tag{font-size:11px;color:var(--charcoal);padding:5px 12px;border:0.5px solid var(--line-strong);font-family:var(--sans);letter-spacing:0.04em}
-    .rendered-body h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);line-height:1.3;margin:28px 0 12px}
-    .rendered-body h3{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--ink);line-height:1.35;margin:22px 0 10px}
-    .rendered-body blockquote{padding:16px 18px;border-left:3px solid var(--ink);background:var(--bg-soft);margin:24px 0;font-family:var(--serif);font-size:17px;font-style:italic;line-height:1.6;color:var(--ink)}
+    .rendered-body h2{font-family:var(--kor);font-size:20px;font-weight:700;color:var(--ink);line-height:1.35;margin:28px 0 12px}
+    .rendered-body h3{font-family:var(--kor);font-size:17px;font-weight:700;color:var(--ink);line-height:1.4;margin:22px 0 10px}
+    .rendered-body blockquote{padding:16px 18px;border-left:3px solid var(--ink);background:var(--bg-soft);margin:24px 0;font-family:var(--serif);font-size:16px;font-style:italic;line-height:1.7;color:var(--ink)}
     .rendered-body p.lead{font-family:var(--serif);font-size:17px;font-weight:500;font-style:italic;line-height:1.7;color:var(--ink);margin-bottom:20px}
     .rendered-body hr{border:none;border-top:1px solid var(--line-mid);margin:32px 0}
     .rendered-body ul{padding-left:20px;margin:12px 0}
-    .rendered-body ul li{font-size:14px;line-height:1.85;color:var(--ink);margin-bottom:6px;font-family:var(--sans)}
-    .rendered-body p{font-size:14px;line-height:1.85;color:var(--ink);margin-bottom:16px;font-family:var(--sans)}
+    .rendered-body ul li,.rendered-body p{font-size:14px;line-height:1.9;color:var(--ink);margin-bottom:14px;font-family:var(--sans)}
     .rendered-body b,.rendered-body strong{font-weight:600}
     .rendered-body i,.rendered-body em{font-style:italic}
+    .rendered-body img{width:100%;height:auto;margin:16px 0;display:block}
+    .detail-tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:32px}
+    .detail-tag{font-size:11px;color:var(--charcoal);padding:5px 12px;border:0.5px solid var(--line-strong);letter-spacing:0.04em}
+    .detail-lead-text{font-family:var(--serif);font-size:17px;font-weight:500;font-style:italic;line-height:1.7;color:var(--ink);margin-bottom:24px}
+    .detail-section-title{font-family:var(--kor);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.35}
+    .detail-body-text{font-size:14px;line-height:1.9;color:var(--ink);font-family:var(--sans);margin-bottom:20px}
+    .detail-divider{height:1px;background:var(--line-strong);margin:28px 0}
+    .detail-pull-quote{padding:20px 20px 20px 18px;border-left:3px solid var(--ink);background:var(--bg-soft);margin:28px 0}
+    .detail-pull-quote p{font-family:var(--serif);font-size:17px;font-style:italic;line-height:1.6;color:var(--ink)}
+    .detail-pull-quote cite{font-size:11px;color:var(--charcoal);font-style:normal;display:block;margin-top:8px;letter-spacing:0.08em}
   </style>
 </head>
 <body>
 
-<!-- 데스크탑 사이드 패널 -->
 <div id="side-panel">
   <div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.1;color:#111;margin-bottom:16px">주담주담<br><em style="font-size:32px;font-weight:400">Guide.</em></div>
+    <div style="font-family:var(--kor);font-size:36px;font-weight:700;line-height:1.2;color:#111;margin-bottom:16px">주담주담<br><span style="font-size:28px;font-weight:400;font-family:var(--serif);font-style:italic">Guide.</span></div>
     <div style="font-size:14px;color:#4A5568;line-height:1.8;margin-bottom:28px">나보다 내 술 취향을 더 잘 아는 공간.<br>우리술 한 잔과 오늘의 안주 사이를<br>가장 정갈하게 잇는 큐레이션.</div>
     <div style="height:1px;background:rgba(17,17,17,0.12);margin-bottom:28px"></div>
-    <div style="font-size:11px;letter-spacing:0.16em;color:#4A5568;text-transform:uppercase;font-family:'Cormorant Garamond',serif;font-style:italic;margin-bottom:16px">4-Tab Navigation</div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <div onclick="switchTab('home')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'"><i class="ti ti-home" style="font-size:18px;color:#4A5568"></i><div><div style="font-size:13px;font-weight:500;color:#111">홈</div><div style="font-size:11px;color:#4A5568">Welcome Dashboard</div></div></div>
-      <div onclick="switchTab('taste')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'"><i class="ti ti-adjustments-horizontal" style="font-size:18px;color:#4A5568"></i><div><div style="font-size:13px;font-weight:500;color:#111">취향진단</div><div style="font-size:11px;color:#4A5568">Taste Guide</div></div></div>
-      <div onclick="switchTab('pairing')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'"><i class="ti ti-tool-kitchen-2" style="font-size:18px;color:#4A5568"></i><div><div style="font-size:13px;font-weight:500;color:#111">안주페어링</div><div style="font-size:11px;color:#4A5568">Food Pairing</div></div></div>
-      <div onclick="switchTab('blog')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'"><i class="ti ti-notebook" style="font-size:18px;color:#4A5568"></i><div><div style="font-size:13px;font-weight:500;color:#111">블로그</div><div style="font-size:11px;color:#4A5568">Editorial Archive</div></div></div>
+      <div onclick="switchTab('home')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        <div><div style="font-size:13px;font-weight:600;color:#111;font-family:var(--kor)">홈</div><div style="font-size:11px;color:#4A5568">Welcome Dashboard</div></div>
+      </div>
+      <div onclick="switchTab('taste')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <div><div style="font-size:13px;font-weight:600;color:#111;font-family:var(--kor)">취향진단</div><div style="font-size:11px;color:#4A5568">Taste Guide</div></div>
+      </div>
+      <div onclick="switchTab('pairing')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <div><div style="font-size:13px;font-weight:600;color:#111;font-family:var(--kor)">안주페어링</div><div style="font-size:11px;color:#4A5568">Food Pairing</div></div>
+      </div>
+      <div onclick="switchTab('blog')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0.5px solid rgba(17,17,17,0.15);cursor:pointer;background:#fff" onmouseover="this.style.background='#EDEAE2'" onmouseout="this.style.background='#fff'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        <div><div style="font-size:13px;font-weight:600;color:#111;font-family:var(--kor)">블로그</div><div style="font-size:11px;color:#4A5568">Editorial Archive</div></div>
+      </div>
     </div>
     <div style="height:1px;background:rgba(17,17,17,0.12);margin:28px 0"></div>
-    <div style="font-size:11px;color:#4A5568;line-height:1.7;font-style:italic;font-family:'Cormorant Garamond',serif">v 0.1 · May 2026<br>A Premium Curation Platform<br>for Korean Traditional Liquor</div>
+    <div style="font-size:11px;color:#4A5568;line-height:1.7;font-style:italic;font-family:var(--serif)">v 0.1 · May 2026<br>A Premium Curation Platform<br>for Korean Traditional Liquor</div>
   </div>
 </div>
 
@@ -274,8 +265,13 @@
       <div class="header-sub">guide · may 2026</div>
     </div>
     <div class="header-right">
-      <i class="ti ti-search"></i>
-      <i class="ti ti-user" id="header-user-icon" onclick="onUserIconClick()"></i>
+      <div class="header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="header-icon" id="header-user-icon" onclick="onUserIconClick()">
+        <svg id="user-svg-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <svg id="user-svg-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16,11 18,13 22,9"/></svg>
+      </div>
     </div>
   </div>
 
@@ -283,9 +279,9 @@
   <div class="screen active" id="screen-home">
     <div class="hero">
       <div class="hero-eyebrow">This week's hero</div>
-      <div class="hero-title">"나보다 내 술 취향을<br>더 잘 아는 공간,<br><em>Judam.</em>"</div>
+      <div class="hero-title">"나보다 내 술 취향을<br>더 잘 아는 공간,<br>주담주담."</div>
       <div class="hero-sub">우리술 한 잔과 오늘의 안주 사이를 가장 정갈하게 잇는 큐레이션.</div>
-      <button class="hero-cta" onclick="switchTab('taste')">1분 만에 내 전통주 취향 진단하기 <i class="ti ti-arrow-right" style="font-size:12px"></i></button>
+      <button class="hero-cta" onclick="switchTab('taste')">1분 만에 내 전통주 취향 진단하기 →</button>
       <svg class="hero-bottle" width="54" viewBox="0 0 40 100" fill="none">
         <rect x="14" y="0" width="12" height="8" rx="2" fill="white"/>
         <path d="M10 18C6 24 4 32 4 44L4 88C4 92 8 96 20 96C32 96 36 92 36 88L36 44C36 32 34 24 30 18L26 8L14 8Z" fill="white"/>
@@ -299,14 +295,26 @@
     </div>
     <div id="weekly-cards">
       <div class="weekly-card" onclick="switchTab('pairing')">
-        <div class="weekly-dot"><i class="ti ti-flame"></i></div>
-        <div class="weekly-info"><div class="weekly-day">FRI · 불금 안주</div><div class="weekly-name">엽떡 매운맛 × 크래프트 막걸리</div><div class="weekly-tag">탄산이 기름을 씻어내는 황금 조합</div></div>
-        <i class="ti ti-arrow-right" style="color:var(--charcoal);font-size:16px"></i>
+        <div class="weekly-dot">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
+        </div>
+        <div class="weekly-info">
+          <div class="weekly-day">FRI · 불금 안주</div>
+          <div class="weekly-name">엽떡 매운맛 × 크래프트 막걸리</div>
+          <div class="weekly-tag">탄산이 기름을 씻어내는 황금 조합</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--charcoal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"/></svg>
       </div>
       <div class="weekly-card" onclick="switchTab('pairing')" style="background:var(--bg-soft)">
-        <div class="weekly-dot" style="background:#6B7280"><i class="ti ti-moon"></i></div>
-        <div class="weekly-info"><div class="weekly-day">SAT · 주말 혼술</div><div class="weekly-name">두부김치 × 한산소곡주</div><div class="weekly-tag">짭조름한 김치의 산미가 단맛을 살린다</div></div>
-        <i class="ti ti-arrow-right" style="color:var(--charcoal);font-size:16px"></i>
+        <div class="weekly-dot" style="background:#6B7280">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </div>
+        <div class="weekly-info">
+          <div class="weekly-day">SAT · 주말 혼술</div>
+          <div class="weekly-name">두부김치 × 한산소곡주</div>
+          <div class="weekly-tag">짭조름한 김치의 산미가 단맛을 살린다</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--charcoal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"/></svg>
       </div>
     </div>
     <div class="divider" style="margin-top:6px"></div>
@@ -315,30 +323,30 @@
       <div class="section-more">JOURNAL</div>
     </div>
     <div class="article-scroll" id="home-articles">
-      <div class="article-card"><div class="article-thumb skeleton"></div><div class="skeleton" style="height:9px;width:80%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:9px;width:55%"></div></div>
-      <div class="article-card"><div class="article-thumb skeleton"></div><div class="skeleton" style="height:9px;width:70%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:9px;width:55%"></div></div>
+      <div class="article-card"><div class="article-thumb skeleton"></div><div class="skeleton" style="height:9px;width:80%;margin-bottom:6px"></div><div class="skeleton" style="height:13px;margin-bottom:6px"></div><div class="skeleton" style="height:9px;width:55%"></div></div>
+      <div class="article-card"><div class="article-thumb skeleton"></div><div class="skeleton" style="height:9px;width:70%;margin-bottom:6px"></div><div class="skeleton" style="height:13px;margin-bottom:6px"></div><div class="skeleton" style="height:9px;width:55%"></div></div>
     </div>
-    <!-- 뉴스레터 구독 -->
+    <!-- 뉴스레터 -->
     <div style="margin:8px 22px 32px;background:var(--ink);padding:24px">
       <div style="font-family:var(--serif);font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:8px">Newsletter</div>
-      <div style="font-family:var(--serif);font-size:20px;font-weight:500;color:#fff;line-height:1.3;margin-bottom:6px">위클리 페어링,<br><em>받아보실래요?</em></div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:18px;font-family:var(--sans)">매주 주담주담의 추천을 메일로 받아보세요.</div>
+      <div style="font-family:var(--kor);font-size:18px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px">위클리 페어링,<br>받아보실래요?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:18px">매주 주담주담의 추천을 메일로 받아보세요.</div>
       <div style="display:flex;gap:8px">
         <input type="email" id="sub-email" placeholder="이메일 주소" style="flex:1;padding:11px 14px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.2);color:#fff;font-size:13px;font-family:var(--sans);outline:none" onkeydown="if(event.key==='Enter')doSubscribe()">
-        <button onclick="doSubscribe()" style="padding:11px 16px;background:#fff;color:var(--ink);border:none;font-size:13px;font-family:var(--sans);cursor:pointer;white-space:nowrap;font-weight:500">구독하기</button>
+        <button onclick="doSubscribe()" style="padding:11px 16px;background:#fff;color:var(--ink);border:none;font-size:13px;font-family:var(--sans);cursor:pointer;white-space:nowrap;font-weight:600">구독하기</button>
       </div>
-      <div id="sub-msg" style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:10px;min-height:18px;font-family:var(--sans)"></div>
+      <div id="sub-msg" style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:10px;min-height:18px"></div>
     </div>
     <div class="pb40"></div>
   </div>
 
-  <!-- TASTE GUIDE -->
+  <!-- TASTE -->
   <div class="screen" id="screen-taste">
     <div id="step1" class="taste-wrap">
       <div class="step-indicator"><div class="step-pip active"></div><div class="step-pip"></div><div class="step-pip"></div></div>
       <div class="step-eyebrow">step i · 주종 필터</div>
       <div class="step-q">어떤 주종이<br>마음에 드세요?</div>
-      <div style="font-size:12px;color:var(--charcoal);margin-bottom:16px;font-family:var(--sans)">복수 선택 가능</div>
+      <div style="font-size:12px;color:var(--charcoal);margin-bottom:16px">복수 선택 가능</div>
       <div class="chip-group" id="jujong-chips">
         <div class="chip" onclick="toggleChip(this)">막걸리</div>
         <div class="chip" onclick="toggleChip(this)">약·청주</div>
@@ -346,32 +354,32 @@
         <div class="chip" onclick="toggleChip(this)">과실주</div>
       </div>
       <div class="hint-box">선택한 주종 안에서 단맛·도수·향의 결을 다음 단계에서 묻습니다.</div>
-      <button class="cta-btn" onclick="gotoStep(2)">다음 단계 <i class="ti ti-arrow-right"></i></button>
+      <button class="cta-btn" onclick="gotoStep(2)">다음 단계 →</button>
     </div>
     <div id="step2" class="taste-wrap" style="display:none">
       <div class="step-indicator"><div class="step-pip done"></div><div class="step-pip active"></div><div class="step-pip"></div></div>
       <div class="step-eyebrow">step ii · 맛 다이얼</div>
       <div class="step-q">맛의 결을<br>조절해 주세요.</div>
-      <div style="font-size:12px;color:var(--charcoal);margin-bottom:24px;font-family:var(--sans)">가로 바를 움직여 직관적으로</div>
+      <div style="font-size:12px;color:var(--charcoal);margin-bottom:24px">가로 바를 움직여 직관적으로</div>
       <div class="slider-group"><div class="slider-row"><span class="slider-name">단맛</span><span class="slider-val" id="lbl-sweet">Medium dry</span></div><input type="range" min="1" max="5" value="3" step="1" oninput="updateSlider('sweet',this.value)"><div class="slider-ends"><span>Dry</span><span>Sweet</span></div></div>
       <div class="slider-group"><div class="slider-row"><span class="slider-name">신맛</span><span class="slider-val" id="lbl-acid">Mild Acidic</span></div><input type="range" min="1" max="5" value="2" step="1" oninput="updateSlider('acid',this.value)"><div class="slider-ends"><span>Smooth</span><span>Bright</span></div></div>
       <div class="slider-group"><div class="slider-row"><span class="slider-name">도수 타격감</span><span class="slider-val" id="lbl-abv">Light Bold</span></div><input type="range" min="1" max="5" value="2" step="1" oninput="updateSlider('abv',this.value)"><div class="slider-ends"><span>Smooth</span><span>Bold</span></div></div>
-      <button class="cta-btn" onclick="gotoStep(3)">다음 단계 <i class="ti ti-arrow-right"></i></button>
-      <button class="cta-outline" onclick="gotoStep(1)"><i class="ti ti-arrow-left"></i> 이전</button>
+      <button class="cta-btn" onclick="gotoStep(3)">다음 단계 →</button>
+      <button class="cta-outline" onclick="gotoStep(1)">← 이전</button>
     </div>
     <div id="step3" class="taste-wrap" style="display:none">
       <div class="step-indicator"><div class="step-pip done"></div><div class="step-pip done"></div><div class="step-pip active"></div></div>
       <div class="step-eyebrow">step iii · 상황 / 무드</div>
       <div class="step-q">오늘의 무드는<br>어떤가요?</div>
-      <div style="font-size:12px;color:var(--charcoal);margin-bottom:20px;font-family:var(--sans)">한 가지만 골라주세요</div>
+      <div style="font-size:12px;color:var(--charcoal);margin-bottom:20px">한 가지만 골라주세요</div>
       <div id="mood-chips">
-        <div class="mood-chip" onclick="selectMood(this)"><span>혼술, 밤새우며 느리게</span><i class="ti ti-moon" style="font-size:16px;opacity:0.6"></i></div>
-        <div class="mood-chip" onclick="selectMood(this)"><span>홈파티, 연인과 두 잔</span><i class="ti ti-heart" style="font-size:16px;opacity:0.6"></i></div>
-        <div class="mood-chip" onclick="selectMood(this)"><span>부모님 선물, 한 병</span><i class="ti ti-gift" style="font-size:16px;opacity:0.6"></i></div>
-        <div class="mood-chip" onclick="selectMood(this)"><span>친구들과 시골박적</span><i class="ti ti-users" style="font-size:16px;opacity:0.6"></i></div>
+        <div class="mood-chip" onclick="selectMood(this)"><span>혼술, 밤새우며 느리게</span><span style="font-size:16px;opacity:0.6">🌙</span></div>
+        <div class="mood-chip" onclick="selectMood(this)"><span>홈파티, 연인과 두 잔</span><span style="font-size:16px;opacity:0.6">♡</span></div>
+        <div class="mood-chip" onclick="selectMood(this)"><span>부모님 선물, 한 병</span><span style="font-size:16px;opacity:0.6">🎁</span></div>
+        <div class="mood-chip" onclick="selectMood(this)"><span>친구들과 시골박적</span><span style="font-size:16px;opacity:0.6">🍻</span></div>
       </div>
-      <button class="cta-btn" id="btn-result" onclick="submitTaste()" style="margin-top:20px">결과 보기 <i class="ti ti-arrow-right"></i></button>
-      <button class="cta-outline" onclick="gotoStep(2)"><i class="ti ti-arrow-left"></i> 이전</button>
+      <button class="cta-btn" id="btn-result" onclick="submitTaste()" style="margin-top:20px">결과 보기 →</button>
+      <button class="cta-outline" onclick="gotoStep(2)">← 이전</button>
     </div>
     <div id="taste-result" style="display:none;padding-bottom:40px">
       <div class="result-header">
@@ -382,18 +390,18 @@
       <div class="result-body">
         <div class="pick-card"><div class="pick-num">PICK<br>01</div><div class="pick-info"><div class="pick-cat" id="res-p1-cat">—</div><div class="pick-name" id="res-p1-name">—</div><div class="pick-comment" id="res-p1-comment">—</div></div><div class="pick-icon"><svg viewBox="0 0 30 72" width="30" fill="none"><rect x="10" y="0" width="10" height="6" rx="1" fill="#4A5568" opacity="0.5"/><path d="M6 14C4 18 3 24 3 32L3 62C3 66 8 70 15 70C22 70 27 66 27 62L27 32C27 24 26 18 24 14L20 6L10 6Z" fill="#4A5568" opacity="0.42"/><rect x="5" y="38" width="20" height="1" fill="white" opacity="0.4"/><rect x="7" y="46" width="16" height="5" rx="1" fill="white" opacity="0.3"/></svg></div></div>
         <div class="pick-card"><div class="pick-num">PICK<br>02</div><div class="pick-info"><div class="pick-cat" id="res-p2-cat">—</div><div class="pick-name" id="res-p2-name">—</div><div class="pick-comment" id="res-p2-comment">—</div></div><div class="pick-icon"><svg viewBox="0 0 30 72" width="30" fill="none"><rect x="10" y="0" width="10" height="6" rx="1" fill="#4A5568" opacity="0.5"/><path d="M8 14C6 18 5 24 5 32L5 60C5 64 10 68 15 68C20 68 25 64 25 60L25 32C25 24 24 18 22 14L20 6L10 6Z" fill="#4A5568" opacity="0.32"/></svg></div></div>
-        <div class="insta-link"><span>인스타 @judam.guide 리뷰 보기</span><i class="ti ti-external-link" style="font-size:14px"></i></div>
-        <button class="cta-outline" onclick="resetTaste()" style="margin-top:16px"><i class="ti ti-refresh"></i> 다시 진단하기</button>
+        <div class="insta-link"><span>인스타 @judam.guide 리뷰 보기</span><span>↗</span></div>
+        <button class="cta-outline" onclick="resetTaste()" style="margin-top:16px">↺ 다시 진단하기</button>
       </div>
     </div>
   </div>
 
-  <!-- FOOD PAIRING -->
+  <!-- PAIRING -->
   <div class="screen" id="screen-pairing">
     <div class="pairing-head">
       <div class="section-label" style="margin-bottom:6px">Tab 03 · Food Pairing</div>
-      <div style="font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.25;margin-bottom:4px">오늘 뭐 시키지?<br><em style="font-weight:400">안주부터 골라봐요.</em></div>
-      <div style="font-size:12px;color:var(--charcoal);font-family:var(--sans)">아이콘을 누르면 어울리는 우리술이 펼쳐집니다.</div>
+      <div class="pairing-head-title">오늘 뭐 시키지?</div>
+      <div class="pairing-head-sub">안주를 누르면 어울리는 우리술이 펼쳐집니다.</div>
     </div>
     <div class="food-grid" id="food-grid">
       <div style="background:var(--bg-soft);min-height:96px" class="skeleton"></div>
@@ -433,32 +441,43 @@
   <!-- ARTICLE DETAIL -->
   <div id="article-detail">
     <div class="detail-header">
-      <button class="detail-back" onclick="closeDetail()"><i class="ti ti-arrow-left"></i> 블로그</button>
-      <i class="ti ti-share" style="font-size:20px;color:var(--charcoal);cursor:pointer"></i>
+      <button class="detail-back" onclick="closeDetail()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"/></svg>
+        블로그
+      </button>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--charcoal)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     </div>
-    <div class="detail-body-scroll" id="detail-body"></div>
+    <div class="detail-scroll" id="detail-body"></div>
   </div>
 
   <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-item active" id="tab-home" onclick="switchTab('home')">
-      <i class="ti ti-home"></i><span>홈</span><div class="tab-dot"></div>
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+      <div class="tab-label">홈</div>
+      <div class="tab-dot"></div>
     </button>
     <button class="tab-item" id="tab-taste" onclick="switchTab('taste')">
-      <i class="ti ti-adjustments-horizontal"></i><span>취향진단</span><div class="tab-dot"></div>
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></div>
+      <div class="tab-label">취향진단</div>
+      <div class="tab-dot"></div>
     </button>
     <button class="tab-item" id="tab-pairing" onclick="switchTab('pairing')">
-      <i class="ti ti-tool-kitchen-2"></i><span>안주페어링</span><div class="tab-dot"></div>
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+      <div class="tab-label">안주페어링</div>
+      <div class="tab-dot"></div>
     </button>
     <button class="tab-item" id="tab-blog" onclick="switchTab('blog')">
-      <i class="ti ti-notebook"></i><span>블로그</span><div class="tab-dot"></div>
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+      <div class="tab-label">블로그</div>
+      <div class="tab-dot"></div>
     </button>
   </div>
 
   <!-- LOGIN MODAL -->
   <div id="login-modal-bg" onclick="onLoginBgClick(event)">
     <div class="login-modal">
-      <button class="lm-close" onclick="closeLoginModal()"><i class="ti ti-x"></i></button>
+      <button class="lm-close" onclick="closeLoginModal()">✕</button>
       <div class="lm-title">어드민 로그인</div>
       <div class="lm-sub">주담주담 관리자 전용</div>
       <label class="lm-label">이메일</label>
@@ -472,57 +491,53 @@
 
   <!-- USER DROPDOWN -->
   <div id="user-dropdown">
-    <div class="ud-item" onclick="window.location.href='/admin'"><i class="ti ti-layout-dashboard"></i> 어드민 대시보드</div>
-    <div class="ud-item" onclick="doModalLogout()" style="color:#C0392B"><i class="ti ti-logout" style="color:#C0392B"></i> 로그아웃</div>
+    <div class="ud-item" onclick="window.location.href='/admin'">⊞ 어드민 대시보드</div>
+    <div class="ud-item" onclick="doModalLogout()" style="color:#C0392B">↩ 로그아웃</div>
   </div>
 
   <div id="toast"></div>
 </div>
 
 <script>
-/* ══ SUPABASE ══ */
-const SUPA_URL = 'https://rjitdsdxcsxmmgsiitre.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqaXRkc2R4Y3N4bW1nc2lpdHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NzUxMTEsImV4cCI6MjA5NTA1MTExMX0.SSGJyP1szBHcJphbMnjFXXsdzxLLN-ioHt2NSAqkrlI';
-const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+const SUPA_URL='https://rjitdsdxcsxmmgsiitre.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqaXRkc2R4Y3N4bW1nc2lpdHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NzUxMTEsImV4cCI6MjA5NTA1MTExMX0.SSGJyP1szBHcJphbMnjFXXsdzxLLN-ioHt2NSAqkrlI';
+const db=supabase.createClient(SUPA_URL,SUPA_KEY);
 
-/* ══ TOAST ══ */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2400);
+// FOOD ICON SVGS (inline — 아이콘 폰트 없이)
+const FOOD_ICONS={
+  'ti-droplet-filled':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
+  'ti-flame':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>',
+  'ti-grill':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M8 5v14M16 5v14M5 19h14M12 5V2"/></svg>',
+  'ti-fish':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c0-5.667 4-8.5 9-9.5-.5 2-1 5 0 7-2 2-3.5 2-4.5 3.5-1.5 2.1-1 5-1 8-3.5-2.5-3.5-9-3.5-9z"/><path d="M18 8c1 2.5 1 7-1 10-2-3-5-5-5-5s4.5-1 6-5z"/><circle cx="17" cy="8" r="1"/></svg>',
+  'ti-soup':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 01-9-9h18a9 9 0 01-9 9z"/><path d="M12 12V3M9 6c0-1.7 1.3-3 3-3s3 1.3 3 3"/></svg>',
+  'ti-slice':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>',
+};
+
+function getFoodIcon(icon){return FOOD_ICONS[icon]||FOOD_ICONS['ti-flame'];}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* TAB */
+const SCREENS={home:'screen-home',taste:'screen-taste',pairing:'screen-pairing',blog:'screen-blog'};
+const TABS={home:'tab-home',taste:'tab-taste',pairing:'tab-pairing',blog:'tab-blog'};
+function switchTab(name){
+  Object.entries(SCREENS).forEach(([k,id])=>document.getElementById(id).classList.toggle('active',k===name));
+  Object.entries(TABS).forEach(([k,id])=>document.getElementById(id).classList.toggle('active',k===name));
+  document.getElementById(SCREENS[name]).scrollTop=0;
+  trackPageView('/',name);
 }
 
-/* ══ TAB SWITCH ══ */
-const SCREENS = {home:'screen-home',taste:'screen-taste',pairing:'screen-pairing',blog:'screen-blog'};
-const TABS    = {home:'tab-home',taste:'tab-taste',pairing:'tab-pairing',blog:'tab-blog'};
+const CAT_MAP={pick:'이달의 PICK',basics:'전통주 입문',field:'숨은 양조장 기행',essay:'에디터 노트'};
 
-function switchTab(name) {
-  Object.entries(SCREENS).forEach(([k,id]) => {
-    document.getElementById(id).classList.toggle('active', k === name);
-  });
-  Object.entries(TABS).forEach(([k,id]) => {
-    document.getElementById(id).classList.toggle('active', k === name);
-  });
-  document.getElementById(SCREENS[name]).scrollTop = 0;
-  // 트래킹
-  trackPageView('/', name);
-}
+function bottleSVG(op=0.42){return `<svg viewBox="0 0 30 72" width="30" fill="none"><rect x="10" y="0" width="10" height="6" rx="1" fill="#4A5568" opacity="0.5"/><path d="M6 14C4 18 3 24 3 32L3 62C3 66 8 70 15 70C22 70 27 66 27 62L27 32C27 24 26 18 24 14L20 6L10 6Z" fill="#4A5568" opacity="${op}"/><rect x="5" y="38" width="20" height="1" fill="white" opacity="0.4"/><rect x="7" y="46" width="16" height="5" rx="1" fill="white" opacity="0.3"/></svg>`;}
 
-/* ══ HELPERS ══ */
-const CAT_MAP = {pick:'이달의 PICK',basics:'전통주 입문',field:'숨은 양조장 기행',essay:'에디터 노트'};
-
-function bottleSVG(op=0.42) {
-  return `<svg viewBox="0 0 30 72" width="30" fill="none"><rect x="10" y="0" width="10" height="6" rx="1" fill="#4A5568" opacity="0.5"/><path d="M6 14C4 18 3 24 3 32L3 62C3 66 8 70 15 70C22 70 27 66 27 62L27 32C27 24 26 18 24 14L20 6L10 6Z" fill="#4A5568" opacity="${op}"/><rect x="5" y="38" width="20" height="1" fill="white" opacity="0.4"/><rect x="7" y="46" width="16" height="5" rx="1" fill="white" opacity="0.3"/></svg>`;
-}
-
-/* ══ HOME ══ */
-async function loadHomeArticles() {
-  const {data} = await db.from('articles').select('*').order('published_at',{ascending:false}).limit(3);
-  if (!data) return;
-  document.getElementById('home-articles').innerHTML = data.map(a => `
-    <div class="article-card" onclick='openDetail(${JSON.stringify(a)})'>
-      <div class="article-thumb">${bottleSVG()}</div>
+/* HOME */
+async function loadHomeArticles(){
+  const {data}=await db.from('articles').select('*').eq('status','published').order('published_at',{ascending:false}).limit(3);
+  if(!data)return;
+  document.getElementById('home-articles').innerHTML=data.map(a=>`
+    <div class="article-card" onclick='openDetail(${JSON.stringify(a).replace(/'/g,"&#39;")})'>
+      <div class="article-thumb">${a.image_url?`<img src="${a.image_url}" alt="${a.title}">`:bottleSVG()}</div>
       <div class="article-cat">${CAT_MAP[a.category]||a.category}</div>
       <div class="article-name">${a.title}</div>
       <div class="article-meta">By Editor ${a.author} · ${a.read_min} min</div>
@@ -530,66 +545,57 @@ async function loadHomeArticles() {
   `).join('');
 }
 
-/* ══ FOOD PAIRING ══ */
-async function loadFoodPairings() {
-  const {data} = await db.from('food_pairings').select('*').order('sort_order');
-  const grid = document.getElementById('food-grid');
-  if (!data) { grid.innerHTML = ''; return; }
-  grid.innerHTML = data.map(f => `
-    <div class="food-cell"
-      data-food="${f.food_name}" data-match="${f.match_liquor}"
-      data-attrs="${f.attrs}" data-why="${f.reason}"
-      onclick="selectFood(this)">
-      <i class="ti ${f.icon} fc-icon"></i>
+/* PAIRING */
+async function loadFoodPairings(){
+  const {data}=await db.from('food_pairings').select('*').order('sort_order');
+  const grid=document.getElementById('food-grid');
+  if(!data){grid.innerHTML='';return;}
+  grid.innerHTML=data.map(f=>`
+    <div class="food-cell" data-food="${f.food_name}" data-match="${f.match_liquor}" data-attrs="${f.attrs}" data-why="${f.reason}" onclick="selectFood(this)">
+      <div class="fc-icon-wrap">${getFoodIcon(f.icon)}</div>
       <div class="fc-label">${f.food_name}</div>
       <div class="fc-sub">${f.food_sub}</div>
     </div>
   `).join('');
 }
 
-function selectFood(el) {
-  document.querySelectorAll('.food-cell').forEach(c => c.classList.remove('active'));
+function selectFood(el){
+  document.querySelectorAll('.food-cell').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  const r = document.getElementById('pairing-result');
-  r.style.display = 'block';
-  document.getElementById('pr-food').textContent  = el.dataset.food + '와 어울리는 술';
-  document.getElementById('pr-match').innerHTML   = el.dataset.match.replace(' / ',' ·<br>');
-  document.getElementById('pr-why').textContent   = el.dataset.why;
-  document.getElementById('pr-attrs').innerHTML   = el.dataset.attrs.split(' · ').map(a=>`<span class="pr-attr">${a}</span>`).join('');
-  // 클릭 트래킹
-  db.from('pairing_clicks').insert({food_name: el.dataset.food}).then(()=>{});
-  setTimeout(() => {
-    const s = document.getElementById('screen-pairing');
-    s.scrollTo({top:s.scrollHeight,behavior:'smooth'});
-  }, 60);
+  const r=document.getElementById('pairing-result');
+  r.style.display='block';
+  document.getElementById('pr-food').textContent=el.dataset.food+'와 어울리는 술';
+  document.getElementById('pr-match').innerHTML=el.dataset.match.replace(' / ',' ·<br>');
+  document.getElementById('pr-why').textContent=el.dataset.why;
+  document.getElementById('pr-attrs').innerHTML=el.dataset.attrs.split(' · ').map(a=>`<span class="pr-attr">${a}</span>`).join('');
+  db.from('pairing_clicks').insert({food_name:el.dataset.food}).then(()=>{});
+  setTimeout(()=>{const s=document.getElementById('screen-pairing');s.scrollTo({top:s.scrollHeight,behavior:'smooth'});},60);
 }
 
-/* ══ BLOG ══ */
-let allArticles = [];
-
-async function loadBlog(cat='all') {
-  if (!allArticles.length) {
-    const {data} = await db.from('articles').select('*').order('published_at',{ascending:false});
-    allArticles = data || [];
+/* BLOG */
+let allArticles=[];
+async function loadBlog(cat='all'){
+  if(!allArticles.length){
+    const {data}=await db.from('articles').select('*').order('published_at',{ascending:false});
+    allArticles=data||[];
   }
-  renderBlog(cat === 'all' ? allArticles : allArticles.filter(a => a.category === cat));
+  renderBlog(cat==='all'?allArticles:allArticles.filter(a=>a.category===cat));
 }
-
-function renderBlog(list) {
-  const wrap = document.getElementById('blog-list');
-  if (!list.length) { wrap.innerHTML = '<div style="padding:48px;text-align:center;color:var(--charcoal);font-family:var(--serif);font-style:italic">아직 아티클이 없습니다.</div>'; return; }
-  const [hero, ...rest] = list;
-  wrap.innerHTML = `
-    <div class="blog-hero" onclick='openDetail(${JSON.stringify(hero)})'>
-      <div class="blog-hero-thumb">${bottleSVG(0.38)}</div>
+function renderBlog(list){
+  const wrap=document.getElementById('blog-list');
+  if(!list.length){wrap.innerHTML='<div style="padding:48px;text-align:center;color:var(--charcoal);font-style:italic">아직 아티클이 없습니다.</div>';return;}
+  const [hero,...rest]=list;
+  wrap.innerHTML=`
+    <div class="blog-hero" onclick='openDetail(${JSON.stringify(hero).replace(/'/g,"&#39;")})'>
+      <div class="blog-hero-thumb">${hero.image_url?`<img src="${hero.image_url}" alt="${hero.title}">`:bottleSVG(0.38)}</div>
       <div class="blog-hero-meta">${CAT_MAP[hero.category]||hero.category} · ${new Date(hero.published_at).toLocaleDateString('ko-KR',{month:'long',year:'numeric'})}</div>
       <div class="blog-hero-title">${hero.title}</div>
       <div class="blog-hero-excerpt">${hero.excerpt||''}</div>
       <div class="blog-hero-footer"><span>By Editor ${hero.author}</span><span>${hero.read_min} min read</span></div>
     </div>
     ${rest.map(a=>`
-      <div class="blog-row" onclick='openDetail(${JSON.stringify(a)})'>
-        <div class="blog-row-thumb">${bottleSVG(0.32)}</div>
+      <div class="blog-row" onclick='openDetail(${JSON.stringify(a).replace(/'/g,"&#39;")})'>
+        <div class="blog-row-thumb">${a.image_url?`<img src="${a.image_url}" alt="${a.title}">`:bottleSVG(0.32)}</div>
         <div class="blog-row-info">
           <div class="blog-row-cat">${CAT_MAP[a.category]||a.category}</div>
           <div class="blog-row-title">${a.title}</div>
@@ -599,42 +605,39 @@ function renderBlog(list) {
     `).join('')}
   `;
 }
-
-function selectCat(el) {
-  document.querySelectorAll('.blog-cat').forEach(c => c.classList.remove('active'));
+function selectCat(el){
+  document.querySelectorAll('.blog-cat').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   loadBlog(el.dataset.cat);
 }
 
-/* ══ ARTICLE DETAIL ══ */
-const BODY_TEMPLATES = {
-  pick:[{type:'lead',text:'에디터가 직접 고르고, 직접 마시고, 직접 썼다.'},{type:'section',title:'이달의 선택',text:'매달 계절과 분위기에 맞는 전통주를 엄선합니다.'},{type:'quote',text:'한 잔을 다 마셨을 때, 또 한 잔이 먹고 싶어지는 술이 좋은 술이다.',cite:'에디터 Han'}],
-  basics:[{type:'lead',text:'처음 전통주 코너 앞에 서면 막막하다.'},{type:'section',title:'기초부터 시작하기',text:'막걸리, 약주, 청주, 증류식 소주 — 이름은 달라도 뿌리는 하나다.'},{type:'quote',text:'희석식과 증류식의 차이를 알면, 전통주의 절반은 이해한 것이다.',cite:'에디터 Park'}],
-  field:[{type:'lead',text:'서울에서 차로 두 시간 반. 양조장 문이 열리는 시간은 오전 여섯 시.'},{type:'section',title:'현장의 이야기',text:'손이 거칠고, 말이 없다. 하지만 술 이야기가 나오면 눈이 달라진다.'},{type:'quote',text:'기계로 만든 누룩은 균일하다. 하지만 손으로 만든 누룩에는 계절이 담긴다.',cite:'양조장 대표'}],
-  essay:[{type:'lead',text:'전통주라는 이름이 붙기 전에, 이 술들은 그냥 술이었다.'},{type:'section',title:'이름이 생긴다는 것',text:'무언가에 이름이 붙는다는 건 그것이 의식의 대상이 되었다는 뜻이다.'},{type:'quote',text:'우리술이라는 말이 좋다. 우리가 함께 마시는 술이라는 의미로.',cite:'에디터 Han'}],
+/* ARTICLE DETAIL */
+const BODY_TMPL={
+  pick:[{type:'lead',text:'에디터가 직접 고르고, 직접 마시고, 직접 썼다.'},{type:'section',title:'이달의 선택',text:'매달 계절과 분위기에 맞는 전통주를 엄선합니다.'},{type:'quote',text:'한 잔을 다 마셨을 때, 또 한 잔이 먹고 싶어지는 술이 좋은 술이다.',cite:'에디터'}],
+  basics:[{type:'lead',text:'처음 전통주 코너 앞에 서면 막막하다.'},{type:'section',title:'기초부터',text:'막걸리, 약주, 청주, 증류식 소주 — 이름은 달라도 뿌리는 하나다.'},{type:'quote',text:'희석식과 증류식의 차이를 알면, 전통주의 절반은 이해한 것이다.',cite:'에디터'}],
+  field:[{type:'lead',text:'서울에서 차로 두 시간 반. 양조장 문이 열리는 시간은 오전 여섯 시.'},{type:'section',title:'현장의 이야기',text:'손이 거칠고 말이 없다. 하지만 술 이야기가 나오면 눈이 달라진다.'},{type:'quote',text:'기계로 만든 누룩은 균일하다. 손으로 만든 누룩에는 계절이 담긴다.',cite:'양조장 대표'}],
+  essay:[{type:'lead',text:'전통주라는 이름이 붙기 전에, 이 술들은 그냥 술이었다.'},{type:'section',title:'이름이 생긴다는 것',text:'무언가에 이름이 붙는다는 건 의식의 대상이 되었다는 뜻이다.'},{type:'quote',text:'우리술이라는 말이 좋다. 우리가 함께 마시는 술이라는 의미로.',cite:'에디터'}],
 };
 
-function openDetail(article) {
-  if (article.id) db.from('articles').update({view_count:(article.view_count||0)+1}).eq('id',article.id).then(()=>{});
-  const body   = document.getElementById('detail-body');
-  const tmpl   = BODY_TEMPLATES[article.category] || BODY_TEMPLATES.essay;
-  const dateStr= new Date(article.published_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-  const initial= (article.author||'E')[0].toUpperCase();
-  let contentHTML = '';
-  if (article.body && article.body.trim()) {
-    contentHTML = `<div class="rendered-body">${article.body}</div>`;
+function openDetail(article){
+  if(article.id)db.from('articles').update({view_count:(article.view_count||0)+1}).eq('id',article.id).then(()=>{});
+  const body=document.getElementById('detail-body');
+  const tmpl=BODY_TMPL[article.category]||BODY_TMPL.essay;
+  const dateStr=new Date(article.published_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+  const initial=(article.author||'E')[0].toUpperCase();
+  let content='';
+  if(article.body&&article.body.trim()){
+    content=`<div class="rendered-body">${article.body}</div>`;
   } else {
-    contentHTML = tmpl.map(b => {
-      if (b.type==='lead') return `<p class="detail-lead">${b.text}</p>`;
-      if (b.type==='section') return `<div class="detail-section-title">${b.title}</div><p class="detail-body-text">${b.text}</p><div class="detail-divider"></div>`;
-      if (b.type==='quote') return `<div class="detail-pull-quote"><p>${b.text}</p><cite>— ${b.cite}</cite></div>`;
+    content=tmpl.map(b=>{
+      if(b.type==='lead')return `<p class="detail-lead-text">${b.text}</p>`;
+      if(b.type==='section')return `<div class="detail-section-title">${b.title}</div><p class="detail-body-text">${b.text}</p><div class="detail-divider"></div>`;
+      if(b.type==='quote')return `<div class="detail-pull-quote"><p>${b.text}</p><cite>— ${b.cite}</cite></div>`;
       return '';
     }).join('');
   }
-  body.innerHTML = `
-    <div class="detail-thumb">
-      <svg viewBox="0 0 80 180" width="80" fill="none"><rect x="28" y="0" width="24" height="16" rx="3" fill="white" opacity="0.25"/><path d="M16 36C10 48 8 64 8 88L8 158C8 165 18 172 40 172C62 172 72 165 72 158L72 88C72 64 70 48 64 36L52 16L28 16Z" fill="white" opacity="0.22"/></svg>
-    </div>
+  body.innerHTML=`
+    <div class="detail-thumb">${article.image_url?`<img src="${article.image_url}" alt="${article.title}">`:`<svg viewBox="0 0 80 180" width="80" fill="none"><rect x="28" y="0" width="24" height="16" rx="3" fill="white" opacity="0.2"/><path d="M16 36C10 48 8 64 8 88L8 158C8 165 18 172 40 172C62 172 72 165 72 158L72 88C72 64 70 48 64 36L52 16L28 16Z" fill="white" opacity="0.18"/></svg>`}</div>
     <div class="detail-content">
       <div class="detail-cat">${CAT_MAP[article.category]||article.category}</div>
       <div class="detail-title">${article.title}</div>
@@ -643,7 +646,7 @@ function openDetail(article) {
         <div style="flex:1"><div class="detail-author">Editor ${article.author}</div><div class="detail-date">${dateStr}</div></div>
         <div class="detail-readtime">${article.read_min} min read</div>
       </div>
-      ${contentHTML}
+      ${content}
       <div class="detail-tag-row">
         <span class="detail-tag"># ${CAT_MAP[article.category]||'전통주'}</span>
         <span class="detail-tag"># 주담주담</span>
@@ -651,172 +654,118 @@ function openDetail(article) {
       </div>
     </div>
   `;
-  body.scrollTop = 0;
+  body.scrollTop=0;
   document.getElementById('article-detail').classList.add('open');
 }
+function closeDetail(){document.getElementById('article-detail').classList.remove('open');}
 
-function closeDetail() {
-  document.getElementById('article-detail').classList.remove('open');
-}
-
-/* ══ TASTE GUIDE ══ */
-const SWEET = ['','Bone Dry','Dry','Medium dry','Off-sweet','Sweet'];
-const ACID  = ['','Smooth','Mild Acidic','Acidic','Bright','Vivid'];
-const ABV   = ['','Silky','Light Bold','Medium Bold','Bold','Full Bold'];
-let tasteState = {jujong:[],sweet:3,acid:2,abv:2,mood:''};
-
-function toggleChip(el) { el.classList.toggle('selected'); }
-function selectMood(el) {
-  document.querySelectorAll('#mood-chips .mood-chip').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-function updateSlider(type, val) {
-  const map = {sweet:SWEET,acid:ACID,abv:ABV};
-  document.getElementById('lbl-'+type).textContent = map[type][val];
-  tasteState[type] = parseInt(val);
-}
-function gotoStep(n) {
-  ['step1','step2','step3','taste-result'].forEach((id,i) => {
-    document.getElementById(id).style.display = (i===n-1) ? 'block' : 'none';
-  });
-  document.getElementById('screen-taste').scrollTop = 0;
-}
-function resetTaste() {
-  document.querySelectorAll('#jujong-chips .chip').forEach(c=>c.classList.remove('selected'));
-  document.querySelectorAll('#mood-chips .mood-chip').forEach(c=>c.classList.remove('selected'));
-  tasteState = {jujong:[],sweet:3,acid:2,abv:2,mood:''};
-  gotoStep(1);
-}
-
-async function submitTaste() {
-  const btn    = document.getElementById('btn-result');
-  const moodEl = document.querySelector('#mood-chips .mood-chip.selected');
-  if (!moodEl) { showToast('무드를 하나 선택해 주세요'); return; }
-  const jujong = [...document.querySelectorAll('#jujong-chips .chip.selected')].map(c=>c.textContent);
-  const mood   = moodEl.querySelector('span').textContent;
-  const s = tasteState.sweet, a = tasteState.acid, v = tasteState.abv;
-  btn.disabled = true;
-  const catMap = {'막걸리':'makgeolli','약·청주':'yakju','증류식 소주':'distilled','과실주':'fruit'};
-  const cats   = jujong.map(j=>catMap[j]).filter(Boolean);
-  let q = db.from('liquors').select('*').eq('is_available',true);
-  if (cats.length) q = q.in('category',cats);
-  const {data:liquors} = await q;
-  let pick1=null, pick2=null;
-  if (liquors && liquors.length) {
-    const scored = liquors.map(l=>({...l,score:Math.abs((l.sweet||3)-s)+Math.abs((l.acid||3)-a)+Math.abs((l.body||3)-v)})).sort((a,b)=>a.score-b.score);
-    pick1 = scored[0]; pick2 = scored[1]||scored[0];
+/* TASTE */
+const SWEET=['','Bone Dry','Dry','Medium dry','Off-sweet','Sweet'];
+const ACID=['','Smooth','Mild Acidic','Acidic','Bright','Vivid'];
+const ABV=['','Silky','Light Bold','Medium Bold','Bold','Full Bold'];
+let tasteState={jujong:[],sweet:3,acid:2,abv:2,mood:''};
+function toggleChip(el){el.classList.toggle('selected');}
+function selectMood(el){document.querySelectorAll('#mood-chips .mood-chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
+function updateSlider(type,val){const map={sweet:SWEET,acid:ACID,abv:ABV};document.getElementById('lbl-'+type).textContent=map[type][val];tasteState[type]=parseInt(val);}
+function gotoStep(n){['step1','step2','step3','taste-result'].forEach((id,i)=>{document.getElementById(id).style.display=(i===n-1)?'block':'none';});document.getElementById('screen-taste').scrollTop=0;}
+function resetTaste(){document.querySelectorAll('#jujong-chips .chip').forEach(c=>c.classList.remove('selected'));document.querySelectorAll('#mood-chips .mood-chip').forEach(c=>c.classList.remove('selected'));tasteState={jujong:[],sweet:3,acid:2,abv:2,mood:''};gotoStep(1);}
+async function submitTaste(){
+  const btn=document.getElementById('btn-result');
+  const moodEl=document.querySelector('#mood-chips .mood-chip.selected');
+  if(!moodEl){showToast('무드를 하나 선택해 주세요');return;}
+  const jujong=[...document.querySelectorAll('#jujong-chips .chip.selected')].map(c=>c.textContent);
+  const mood=moodEl.querySelector('span').textContent;
+  const s=tasteState.sweet,a=tasteState.acid,v=tasteState.abv;
+  btn.disabled=true;
+  const catMap={'막걸리':'makgeolli','약·청주':'yakju','증류식 소주':'distilled','과실주':'fruit'};
+  const cats=jujong.map(j=>catMap[j]).filter(Boolean);
+  let q=db.from('liquors').select('*').eq('is_available',true);
+  if(cats.length)q=q.in('category',cats);
+  const {data:liquors}=await q;
+  let pick1=null,pick2=null;
+  if(liquors&&liquors.length){
+    const scored=liquors.map(l=>({...l,score:Math.abs((l.sweet||3)-s)+Math.abs((l.acid||3)-a)+Math.abs((l.body||3)-v)})).sort((a,b)=>a.score-b.score);
+    pick1=scored[0];pick2=scored[1]||scored[0];
   }
-  const catLabel = {makgeolli:'막걸리',yakju:'약·청주',distilled:'증류식 소주',fruit:'과실주'};
-  document.getElementById('res-title').textContent = `${SWEET[s]} × ${ABV[v]}`;
-  document.getElementById('res-for').textContent   = 'FOR YOU · '+mood;
-  if (pick1) {
-    document.getElementById('res-p1-cat').textContent     = catLabel[pick1.category]||'전통주';
-    document.getElementById('res-p1-name').textContent    = pick1.name;
-    document.getElementById('res-p1-comment').textContent = pick1.description||'';
-  }
-  if (pick2) {
-    document.getElementById('res-p2-cat').textContent     = catLabel[pick2.category]||'전통주';
-    document.getElementById('res-p2-name').textContent    = pick2.name;
-    document.getElementById('res-p2-comment').textContent = pick2.description||'';
-  }
+  const catLabel={makgeolli:'막걸리',yakju:'약·청주',distilled:'증류식 소주',fruit:'과실주'};
+  document.getElementById('res-title').textContent=`${SWEET[s]} × ${ABV[v]}`;
+  document.getElementById('res-for').textContent='FOR YOU · '+mood;
+  if(pick1){document.getElementById('res-p1-cat').textContent=catLabel[pick1.category]||'전통주';document.getElementById('res-p1-name').textContent=pick1.name;document.getElementById('res-p1-comment').textContent=pick1.description||'';}
+  if(pick2){document.getElementById('res-p2-cat').textContent=catLabel[pick2.category]||'전통주';document.getElementById('res-p2-name').textContent=pick2.name;document.getElementById('res-p2-comment').textContent=pick2.description||'';}
   ['step1','step2','step3'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('taste-result').style.display='block';
   document.getElementById('screen-taste').scrollTop=0;
-  const {error} = await db.from('taste_results').insert({
-    jujong,sweet:s,acid:a,abv:v,mood,
-    pick1_name:pick1?.name||'',pick1_comment:pick1?.description||'',
-    pick2_name:pick2?.name||'',pick2_comment:pick2?.description||'',
-  });
-  btn.disabled = false;
-  if (!error) showToast('취향 진단 결과가 저장되었습니다 ✓');
+  const {error}=await db.from('taste_results').insert({jujong,sweet:s,acid:a,abv:v,mood,pick1_name:pick1?.name||'',pick1_comment:pick1?.description||'',pick2_name:pick2?.name||'',pick2_comment:pick2?.description||''});
+  btn.disabled=false;
+  if(!error)showToast('취향 진단 결과가 저장되었습니다 ✓');
 }
 
-/* ══ NEWSLETTER ══ */
-async function doSubscribe() {
-  const email = document.getElementById('sub-email').value.trim();
-  const msg   = document.getElementById('sub-msg');
-  if (!email || !email.includes('@')) { msg.textContent='올바른 이메일을 입력해주세요.'; return; }
-  const {error} = await db.from('subscribers').insert({email,source:'web_home'});
-  if (error) {
-    msg.textContent = error.code==='23505' ? '이미 구독 중인 이메일입니다.' : '오류가 발생했습니다.';
-    return;
-  }
+/* NEWSLETTER */
+async function doSubscribe(){
+  const email=document.getElementById('sub-email').value.trim();
+  const msg=document.getElementById('sub-msg');
+  if(!email||!email.includes('@')){msg.textContent='올바른 이메일을 입력해주세요.';return;}
+  const {error}=await db.from('subscribers').insert({email,source:'web_home'});
+  if(error){msg.textContent=error.code==='23505'?'이미 구독 중인 이메일입니다.':'오류가 발생했습니다.';return;}
   document.getElementById('sub-email').value='';
-  msg.style.color='#fff';
-  msg.textContent='구독해주셔서 감사합니다 🍶';
-  setTimeout(()=>{msg.textContent=''},4000);
+  msg.style.color='#fff';msg.textContent='구독해주셔서 감사합니다 🍶';
+  setTimeout(()=>{msg.textContent='';},4000);
 }
 
-/* ══ AUTH ══ */
-let isLoggedIn = false;
-
-function setUserIcon(on) {
-  const icon = document.getElementById('header-user-icon');
-  icon.className = on ? 'ti ti-user-check' : 'ti ti-user';
-  icon.style.color = on ? 'var(--ink)' : 'var(--charcoal)';
+/* AUTH */
+let isLoggedIn=false;
+function setUserIcon(on){
+  document.getElementById('user-svg-off').style.display=on?'none':'block';
+  document.getElementById('user-svg-on').style.display=on?'block':'none';
 }
-
-async function checkAuthState() {
-  const {data:{session}} = await db.auth.getSession();
-  if (!session) return;
-  const {data:admin} = await db.from('admin_users').select('email').eq('email',session.user.email).single();
-  if (admin) { isLoggedIn=true; setUserIcon(true); }
+async function checkAuthState(){
+  const {data:{session}}=await db.auth.getSession();
+  if(!session)return;
+  const {data:admin}=await db.from('admin_users').select('email').eq('email',session.user.email).single();
+  if(admin){isLoggedIn=true;setUserIcon(true);}
 }
-
-function onUserIconClick() {
-  if (isLoggedIn) {
-    document.getElementById('user-dropdown').classList.toggle('open');
-  } else {
-    openLoginModal();
-  }
+function onUserIconClick(){
+  if(isLoggedIn){document.getElementById('user-dropdown').classList.toggle('open');}
+  else{openLoginModal();}
 }
-
-function openLoginModal() {
-  document.getElementById('lm-email').value='';
-  document.getElementById('lm-pw').value='';
-  document.getElementById('lm-err').textContent='';
+function openLoginModal(){
+  document.getElementById('lm-email').value='';document.getElementById('lm-pw').value='';document.getElementById('lm-err').textContent='';
   document.getElementById('login-modal-bg').classList.add('open');
   setTimeout(()=>document.getElementById('lm-email').focus(),100);
 }
-function closeLoginModal() { document.getElementById('login-modal-bg').classList.remove('open'); }
-function onLoginBgClick(e) { if(e.target===document.getElementById('login-modal-bg')) closeLoginModal(); }
-
-async function doModalLogin() {
-  const email = document.getElementById('lm-email').value.trim();
-  const pw    = document.getElementById('lm-pw').value;
-  const btn   = document.getElementById('lm-btn');
-  const err   = document.getElementById('lm-err');
+function closeLoginModal(){document.getElementById('login-modal-bg').classList.remove('open');}
+function onLoginBgClick(e){if(e.target===document.getElementById('login-modal-bg'))closeLoginModal();}
+async function doModalLogin(){
+  const email=document.getElementById('lm-email').value.trim();
+  const pw=document.getElementById('lm-pw').value;
+  const btn=document.getElementById('lm-btn');
+  const err=document.getElementById('lm-err');
   err.textContent='';
-  if (!email||!pw) { err.textContent='이메일과 비밀번호를 입력해주세요.'; return; }
-  btn.disabled=true; btn.textContent='로그인 중...';
-  const {data,error} = await db.auth.signInWithPassword({email,password:pw});
-  if (error) { err.textContent='이메일 또는 비밀번호가 틀렸습니다.'; btn.disabled=false; btn.textContent='로그인'; return; }
-  const {data:admin} = await db.from('admin_users').select('email').eq('email',email).single();
-  if (!admin) { await db.auth.signOut(); err.textContent='어드민 권한이 없습니다.'; btn.disabled=false; btn.textContent='로그인'; return; }
-  isLoggedIn=true; setUserIcon(true);
-  btn.disabled=false; btn.textContent='로그인';
-  closeLoginModal();
-  showToast('로그인되었습니다. 어드민으로 이동합니다.');
-  setTimeout(()=>{ window.location.href='/admin'; },1200);
+  if(!email||!pw){err.textContent='이메일과 비밀번호를 입력해주세요.';return;}
+  btn.disabled=true;btn.textContent='로그인 중...';
+  const {error}=await db.auth.signInWithPassword({email,password:pw});
+  if(error){err.textContent='이메일 또는 비밀번호가 틀렸습니다.';btn.disabled=false;btn.textContent='로그인';return;}
+  const {data:admin}=await db.from('admin_users').select('email').eq('email',email).single();
+  if(!admin){await db.auth.signOut();err.textContent='어드민 권한이 없습니다.';btn.disabled=false;btn.textContent='로그인';return;}
+  isLoggedIn=true;setUserIcon(true);btn.disabled=false;btn.textContent='로그인';
+  closeLoginModal();showToast('로그인되었습니다. 어드민으로 이동합니다.');
+  setTimeout(()=>{window.location.href='/admin';},1200);
+}
+async function doModalLogout(){
+  await db.auth.signOut();isLoggedIn=false;setUserIcon(false);
+  document.getElementById('user-dropdown').classList.remove('open');showToast('로그아웃되었습니다.');
 }
 
-async function doModalLogout() {
-  await db.auth.signOut();
-  isLoggedIn=false; setUserIcon(false);
-  document.getElementById('user-dropdown').classList.remove('open');
-  showToast('로그아웃되었습니다.');
-}
-
-/* ══ PAGE VIEW TRACKING ══ */
-function trackPageView(path, tab=null) {
-  let sid = sessionStorage.getItem('jd_sid');
-  if (!sid) { sid=Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem('jd_sid',sid); }
+/* TRACKING */
+function trackPageView(path,tab=null){
+  let sid=sessionStorage.getItem('jd_sid');
+  if(!sid){sid=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('jd_sid',sid);}
   db.from('page_views').insert({path,tab,referrer:document.referrer||null,user_agent:navigator.userAgent,session_id:sid}).then(()=>{});
 }
 
-/* ══ INIT ══ */
-(async () => {
-  await Promise.all([loadHomeArticles(), loadFoodPairings(), loadBlog('all')]);
+/* INIT */
+(async()=>{
+  await Promise.all([loadHomeArticles(),loadFoodPairings(),loadBlog('all')]);
   await checkAuthState();
   trackPageView('/');
 })();

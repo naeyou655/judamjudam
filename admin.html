@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>주담주담 어드민</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+  <!-- SVG 아이콘 inline 사용 (CDN 불필요) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <style>
@@ -17,7 +17,8 @@
       --line:rgba(17,17,17,0.10);--line-mid:rgba(17,17,17,0.16);
       --red:#C0392B;--green:#27AE60;
       --serif:'Cormorant Garamond',Georgia,serif;
-      --sans:'Pretendard',-apple-system,sans-serif;
+      --kor:'Nanum Myeongjo','Apple SD Gothic Neo',serif;
+      --sans:'Apple SD Gothic Neo','Noto Sans KR',-apple-system,sans-serif;
       --sidebar:240px;
     }
     html,body{height:100%;font-family:var(--sans);color:var(--ink);background:var(--bg-soft)}
@@ -198,25 +199,25 @@
     </div>
     <nav class="sb-nav">
       <div class="sb-section">Overview</div>
-      <button class="sb-item active" onclick="showPage('dashboard',this)"><i class="ti ti-dashboard"></i> 대시보드</button>
+      <button class="sb-item active" onclick="showPage('dashboard',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> 대시보드</button>
       <div class="sb-section">콘텐츠</div>
-      <button class="sb-item" onclick="showPage('articles',this)"><i class="ti ti-article"></i> 아티클</button>
-      <button class="sb-item" onclick="showPage('liquors',this)"><i class="ti ti-bottle"></i> 우리술 DB</button>
-      <button class="sb-item" onclick="showPage('pairings',this)"><i class="ti ti-tool-kitchen-2"></i> 안주페어링</button>
-      <button class="sb-item" onclick="showPage('weekly',this)"><i class="ti ti-calendar-week"></i> 위클리 설정</button>
+      <button class="sb-item" onclick="showPage('articles',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg> 아티클</button>
+      <button class="sb-item" onclick="showPage('liquors',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22l1-8H6l4-12h4l-2 7h3L8 22z"/></svg> 우리술 DB</button>
+      <button class="sb-item" onclick="showPage('pairings',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> 안주페어링</button>
+      <button class="sb-item" onclick="showPage('weekly',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 위클리 설정</button>
       <div class="sb-section">인사이트</div>
-      <button class="sb-item" onclick="showPage('visitors',this)"><i class="ti ti-chart-line"></i> 방문자 통계</button>
-      <button class="sb-item" onclick="showPage('taste-data',this)"><i class="ti ti-chart-bar"></i> 취향진단 데이터</button>
-      <button class="sb-item" onclick="showPage('pairing-clicks',this)"><i class="ti ti-pointer"></i> 페어링 클릭</button>
+      <button class="sb-item" onclick="showPage('visitors',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg> 방문자 통계</button>
+      <button class="sb-item" onclick="showPage('taste-data',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 취향진단 데이터</button>
+      <button class="sb-item" onclick="showPage('pairing-clicks',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> 페어링 클릭</button>
       <div class="sb-section">운영</div>
-      <button class="sb-item" onclick="showPage('subscribers',this)"><i class="ti ti-mail"></i> 구독자</button>
-      <button class="sb-item" onclick="showPage('images',this)"><i class="ti ti-photo"></i> 이미지 관리</button>
+      <button class="sb-item" onclick="showPage('subscribers',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 구독자</button>
+      <button class="sb-item" onclick="showPage('images',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg> 이미지 관리</button>
       <div class="sb-section">설정</div>
-      <button class="sb-item" onclick="showPage('app-settings',this)"><i class="ti ti-settings"></i> 앱 설정</button>
+      <button class="sb-item" onclick="showPage('app-settings',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M20 12h-2M17.66 17.66l-1.41-1.41M12 20v-2M6.34 17.66l1.41-1.41M4 12h2M6.34 6.34l1.41 1.41"/></svg> 앱 설정</button>
     </nav>
     <div class="sb-footer">
       <div class="sb-user" id="sb-user-email">—</div>
-      <button class="sb-logout" onclick="doLogout()"><i class="ti ti-logout"></i> 로그아웃</button>
+      <button class="sb-logout" onclick="doLogout()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> 로그아웃</button>
     </div>
   </div>
 
@@ -246,7 +247,7 @@
 
     <!-- ARTICLES -->
     <div class="page" id="page-articles">
-      <div class="page-head"><div><div class="page-title">아티클</div><div class="page-sub">블로그 콘텐츠 관리</div></div><button class="btn btn-primary" onclick="openArticleEditor()"><i class="ti ti-plus"></i> 새 아티클</button></div>
+      <div class="page-head"><div><div class="page-title">아티클</div><div class="page-sub">블로그 콘텐츠 관리</div></div><button class="btn btn-primary" onclick="openArticleEditor()">+ 새 아티클</button></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table class="tbl" id="articles-table">
           <thead><tr><th>제목</th><th>카테고리</th><th>상태</th><th>작성자</th><th>읽기</th><th>히어로</th><th>조회수</th><th></th></tr></thead>
@@ -257,7 +258,7 @@
 
     <!-- LIQUORS -->
     <div class="page" id="page-liquors">
-      <div class="page-head"><div><div class="page-title">우리술 DB</div><div class="page-sub">취향진단 추천에 사용되는 술 데이터</div></div><button class="btn btn-primary" onclick="openLiquorModal()"><i class="ti ti-plus"></i> 새 술 등록</button></div>
+      <div class="page-head"><div><div class="page-title">우리술 DB</div><div class="page-sub">취향진단 추천에 사용되는 술 데이터</div></div><button class="btn btn-primary" onclick="openLiquorModal()">+ 새 술 등록</button></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table class="tbl" id="liquors-table">
           <thead><tr><th>순서</th><th>이름</th><th>양조장</th><th>주종</th><th>도수</th><th>단맛</th><th>신맛</th><th>바디</th><th></th></tr></thead>
@@ -268,7 +269,7 @@
 
     <!-- PAIRINGS -->
     <div class="page" id="page-pairings">
-      <div class="page-head"><div><div class="page-title">안주페어링</div><div class="page-sub">안주별 우리술 매칭</div></div><button class="btn btn-primary" onclick="openPairingModal()"><i class="ti ti-plus"></i> 새 안주</button></div>
+      <div class="page-head"><div><div class="page-title">안주페어링</div><div class="page-sub">안주별 우리술 매칭</div></div><button class="btn btn-primary" onclick="openPairingModal()">+ 새 안주</button></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table class="tbl" id="pairings-table">
           <thead><tr><th>순서</th><th>안주명</th><th>매칭 술</th><th>속성</th><th></th></tr></thead>
@@ -282,7 +283,7 @@
       <div class="page-title">위클리 페어링 설정</div>
       <div class="page-sub">홈 화면에 노출되는 이번 주 추천 페어링</div>
       <div id="weekly-list"></div>
-      <button class="btn btn-outline" onclick="addWeeklyItem()" style="margin-top:8px"><i class="ti ti-plus"></i> 항목 추가</button>
+      <button class="btn btn-outline" onclick="addWeeklyItem()" style="margin-top:8px">+ 항목 추가</button>
     </div>
 
     <!-- VISITORS -->
@@ -342,7 +343,7 @@
 
     <!-- SUBSCRIBERS -->
     <div class="page" id="page-subscribers">
-      <div class="page-head"><div><div class="page-title">구독자</div><div class="page-sub">뉴스레터 구독자 목록</div></div><button class="btn btn-outline" onclick="exportSubscribers()"><i class="ti ti-download"></i> CSV 내보내기</button></div>
+      <div class="page-head"><div><div class="page-title">구독자</div><div class="page-sub">뉴스레터 구독자 목록</div></div><button class="btn btn-outline" onclick="exportSubscribers()">↓ CSV 내보내기</button></div>
       <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
         <div class="stat-card"><div class="stat-label">전체 구독자</div><div class="stat-value" id="sub-total">—</div></div>
         <div class="stat-card"><div class="stat-label">활성 구독자</div><div class="stat-value" id="sub-active">—</div></div>
@@ -359,10 +360,10 @@
     <!-- IMAGES -->
     <div class="page" id="page-images">
       <div class="page-head"><div><div class="page-title">이미지 관리</div><div class="page-sub">Supabase Storage 업로드 및 관리</div></div>
-        <label class="btn btn-primary" style="cursor:pointer"><i class="ti ti-upload"></i> 이미지 업로드<input type="file" id="img-upload-input" accept="image/*" multiple style="display:none" onchange="uploadImages(this)"></label>
+        <label class="btn btn-primary" style="cursor:pointer">↑ 이미지 업로드<input type="file" id="img-upload-input" accept="image/*" multiple style="display:none" onchange="uploadImages(this)"></label>
       </div>
       <div id="drop-zone" style="border:2px dashed var(--line-mid);padding:48px;text-align:center;margin-bottom:24px;background:var(--white);cursor:pointer" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="onDrop(event)" onclick="document.getElementById('img-upload-input').click()">
-        <i class="ti ti-photo-up" style="font-size:32px;color:var(--mid);display:block;margin-bottom:12px"></i>
+        📷
         <div style="font-size:14px;color:var(--mid)">이미지를 드래그하거나 클릭해서 업로드</div>
         <div style="font-size:12px;color:var(--mid);margin-top:6px;opacity:0.5">JPG, PNG, WEBP · 최대 5MB</div>
       </div>
@@ -379,7 +380,7 @@
         <div class="form-row"><label class="form-label">히어로 제목</label><input type="text" class="form-input" id="set-hero-title"></div>
         <div class="form-row"><label class="form-label">히어로 부제</label><input type="text" class="form-input" id="set-hero-sub"></div>
         <div class="form-row"><label class="form-label">헤더 날짜 표기</label><input type="text" class="form-input" id="set-header-date" placeholder="may 2026"></div>
-        <div class="btn-row"><button class="btn btn-primary" onclick="saveSettings()"><i class="ti ti-device-floppy"></i> 저장</button></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveSettings()">↓ 저장</button></div>
       </div>
     </div>
 
@@ -390,7 +391,7 @@
 <div id="article-editor" style="display:none;position:fixed;inset:0;background:var(--bg-soft);z-index:300;flex-direction:column">
   <div style="height:56px;background:var(--white);border-bottom:1px solid var(--line-mid);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;gap:16px">
     <div style="display:flex;align-items:center;gap:16px">
-      <button onclick="closeArticleEditor()" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mid);background:none;border:none;cursor:pointer;font-family:var(--sans)"><i class="ti ti-arrow-left" style="font-size:17px"></i> 목록으로</button>
+      <button onclick="closeArticleEditor()" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mid);background:none;border:none;cursor:pointer;font-family:var(--sans)">← 목록으로</button>
       <div style="width:1px;height:20px;background:var(--line-mid)"></div>
       <span id="editor-mode-label" style="font-size:12px;color:var(--mid);font-family:var(--sans)">새 아티클</span>
     </div>
@@ -399,7 +400,7 @@
         <button id="tab-edit-btn" onclick="switchEditorTab('edit')" style="padding:7px 16px;font-size:12px;font-family:var(--sans);background:var(--ink);color:#fff;border:none;cursor:pointer">편집</button>
         <button id="tab-preview-btn" onclick="switchEditorTab('preview')" style="padding:7px 16px;font-size:12px;font-family:var(--sans);background:transparent;color:var(--mid);border:none;cursor:pointer">미리보기</button>
       </div>
-      <button class="btn btn-primary" onclick="saveArticle()" style="margin:0"><i class="ti ti-device-floppy"></i> 저장</button>
+      <button class="btn btn-primary" onclick="saveArticle()" style="margin:0">↓ 저장</button>
     </div>
   </div>
   <div style="flex:1;display:flex;overflow:hidden">
@@ -411,21 +412,38 @@
         <div style="flex:1;min-width:60px"><div style="font-size:10px;letter-spacing:0.1em;color:var(--mid);text-transform:uppercase;margin-bottom:6px">읽기(분)</div><input type="number" id="a-read-min" class="form-input" value="5" min="1" style="margin:0;padding:8px 10px"></div>
         <div style="flex:1;min-width:120px"><div style="font-size:10px;letter-spacing:0.1em;color:var(--mid);text-transform:uppercase;margin-bottom:6px">발행일</div><input type="date" id="a-published-at" class="form-input" style="margin:0;padding:8px 10px"></div>
         <div style="flex:1;min-width:80px"><div style="font-size:10px;letter-spacing:0.1em;color:var(--mid);text-transform:uppercase;margin-bottom:6px">상태</div><select id="a-status" class="form-select" style="padding:8px 10px"><option value="published">발행</option><option value="draft">초안</option><option value="scheduled">예약</option></select></div>
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:10px;letter-spacing:0.1em;color:var(--mid);text-transform:uppercase;margin-bottom:6px">썸네일 이미지</div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="text" id="a-image-url" class="form-input" placeholder="이미지 URL" style="margin:0;padding:8px 10px;font-size:12px">
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;padding:8px 10px">
+              ↑ 업로드
+              <input type="file" accept="image/*" style="display:none" onchange="uploadArticleThumb(this)">
+            </label>
+          </div>
+          <div id="a-thumb-preview" style="margin-top:6px;display:none"><img id="a-thumb-img" src="" style="width:60px;height:40px;object-fit:cover;border:0.5px solid var(--line-mid)"></div>
+        </div>
         <div style="display:flex;align-items:center;gap:8px;padding-top:18px"><div class="toggle-wrap" onclick="toggleHero()"><div class="toggle" id="a-hero-toggle"></div><span style="font-size:12px;color:var(--mid)">히어로</span></div></div>
       </div>
       <div style="background:var(--bg-soft);border-bottom:1px solid var(--line);padding:12px 24px;flex-shrink:0"><input type="text" id="a-excerpt" class="form-input" placeholder="요약 — 블로그 목록에 노출되는 한 줄 설명" style="margin:0;padding:9px 12px;background:var(--white)"></div>
       <div style="background:var(--white);border-bottom:1px solid var(--line-mid);padding:8px 24px;display:flex;align-items:center;gap:4px;flex-shrink:0;flex-wrap:wrap">
-        <button class="tb-btn" onclick="document.getElementById('a-body-editor').focus();document.execCommand('bold')" title="Bold"><i class="ti ti-bold"></i></button>
-        <button class="tb-btn" onclick="document.getElementById('a-body-editor').focus();document.execCommand('italic')" title="Italic"><i class="ti ti-italic"></i></button>
+        <button class="tb-btn" onclick="document.getElementById('a-body-editor').focus();document.execCommand('bold')" title="Bold"><strong style="font-size:13px">B</strong></button>
+        <button class="tb-btn" onclick="document.getElementById('a-body-editor').focus();document.execCommand('italic')" title="Italic"><em style="font-size:13px">I</em></button>
         <div style="width:1px;height:20px;background:var(--line-mid);margin:0 4px"></div>
         <button class="tb-btn" onclick="insertBlock('h2')" title="H2"><span style="font-size:11px;font-weight:700">H2</span></button>
         <button class="tb-btn" onclick="insertBlock('h3')" title="H3"><span style="font-size:11px;font-weight:700">H3</span></button>
         <div style="width:1px;height:20px;background:var(--line-mid);margin:0 4px"></div>
-        <button class="tb-btn" onclick="insertBlock('quote')" title="인용구"><i class="ti ti-quote"></i></button>
-        <button class="tb-btn" onclick="insertBlock('lead')" title="리드 문단"><i class="ti ti-typography"></i></button>
-        <button class="tb-btn" onclick="insertBlock('hr')" title="구분선"><i class="ti ti-minus"></i></button>
-        <button class="tb-btn" onclick="insertBlock('ul')" title="목록"><i class="ti ti-list"></i></button>
-        <button class="tb-btn" onclick="if(confirm('본문을 모두 지울까요?'))document.getElementById('a-body-editor').innerHTML=''" title="초기화" style="margin-left:auto;color:var(--red)"><i class="ti ti-trash"></i></button>
+        <button class="tb-btn" onclick="insertBlock('quote')" title="인용구">"</button>
+        <button class="tb-btn" onclick="insertBlock('lead')" title="리드 문단">T</button>
+        <button class="tb-btn" onclick="insertBlock('hr')" title="구분선">—</button>
+        <button class="tb-btn" onclick="insertBlock('ul')" title="목록">☰</button>
+        <button class="tb-btn" onclick="if(confirm('본문을 모두 지울까요?'))document.getElementById('a-body-editor').innerHTML=''" title="초기화" style="margin-left:auto;color:var(--red)">✕</button>
+        <div style="width:1px;height:20px;background:var(--line-mid);margin:0 4px"></div>
+        <label class="tb-btn" style="cursor:pointer" title="이미지 삽입">
+          🖼
+          <input type="file" accept="image/*" style="display:none" onchange="insertImageInEditor(this)">
+        </label>
+        <button class="tb-btn" onclick="insertImageByUrl()" title="이미지 URL 삽입">🔗</button>
       </div>
       <div id="a-body-editor" contenteditable="true" spellcheck="false" oninput="syncPreview()" style="flex:1;overflow-y:auto;padding:32px 40px;outline:none;font-family:var(--sans);font-size:15px;line-height:1.85;color:var(--ink);background:var(--white);caret-color:var(--ink)"></div>
     </div>
@@ -462,12 +480,12 @@
       <div class="form-row"><label class="form-label">바디 (1-5)</label><input type="number" class="form-input" id="l-body" min="1" max="5" value="3"></div>
     </div>
     <div class="form-row"><label class="form-label">한 줄 설명</label><input type="text" class="form-input" id="l-description" placeholder="에디터 코멘트"></div>
-    <div class="form-row"><label class="form-label">이미지 URL</label><div style="display:flex;gap:8px"><input type="text" class="form-input" id="l-image-url" placeholder="이미지 URL" style="margin:0"><button class="btn btn-outline" onclick="openImagePicker('l-image-url')" style="flex-shrink:0"><i class="ti ti-photo"></i> 선택</button></div></div>
+    <div class="form-row"><label class="form-label">이미지 URL</label><div style="display:flex;gap:8px"><input type="text" class="form-input" id="l-image-url" placeholder="이미지 URL" style="margin:0"><button class="btn btn-outline" onclick="openImagePicker('l-image-url')" style="flex-shrink:0">🖼 선택</button></div></div>
     <div class="form-row"><label class="form-label">노출 순서</label><input type="number" class="form-input" id="l-sort" value="1" min="1"></div>
     <div class="form-row"><div class="toggle-wrap" onclick="toggleEl('l-avail-toggle','liquorAvailOn')"><div class="toggle on" id="l-avail-toggle"></div><span style="font-size:13px;color:var(--mid)">노출 활성화</span></div></div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('liquor-modal')">취소</button>
-      <button class="btn btn-primary" onclick="saveLiquor()"><i class="ti ti-device-floppy"></i> 저장</button>
+      <button class="btn btn-primary" onclick="saveLiquor()">↓ 저장</button>
     </div>
   </div>
 </div>
@@ -489,7 +507,7 @@
     <div class="form-row"><label class="form-label">페어링 이유</label><textarea class="form-textarea" id="p-reason" placeholder="기름진 치킨의..." style="min-height:80px"></textarea></div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('pairing-modal')">취소</button>
-      <button class="btn btn-primary" onclick="savePairing()"><i class="ti ti-device-floppy"></i> 저장</button>
+      <button class="btn btn-primary" onclick="savePairing()">↓ 저장</button>
     </div>
   </div>
 </div>
@@ -656,8 +674,8 @@ async function loadArticles(){
     <td>${a.is_hero?'<span class="badge badge-hero">HERO</span>':'<span style="color:var(--line-mid)">—</span>'}</td>
     <td>${a.view_count||0}</td>
     <td><div style="display:flex;gap:6px">
-      <button class="btn btn-outline btn-sm" onclick="openArticleEditor('${a.id}')"><i class="ti ti-pencil"></i></button>
-      <button class="btn btn-danger btn-sm" onclick="confirmDelete('articles','${a.id}','${a.title.replace(/'/g,"\\'")}')"><i class="ti ti-trash"></i></button>
+      <button class="btn btn-outline btn-sm" onclick="openArticleEditor('${a.id}')">✎</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('articles','${a.id}','${a.title.replace(/'/g,"\\'")}')">✕</button>
     </div></td>
   </tr>`).join('');
 }
@@ -676,6 +694,13 @@ function openArticleEditor(id=null){
       document.getElementById('a-status').value=a.status||'published';
       document.getElementById('a-excerpt').value=a.excerpt||'';
       document.getElementById('a-body-editor').innerHTML=a.body||'';
+      document.getElementById('a-image-url').value=a.image_url||'';
+      if(a.image_url){
+        document.getElementById('a-thumb-img').src=a.image_url;
+        document.getElementById('a-thumb-preview').style.display='block';
+      } else {
+        document.getElementById('a-thumb-preview').style.display='none';
+      }
       heroIsOn=!!a.is_hero;
       document.getElementById('a-hero-toggle').classList.toggle('on',heroIsOn);
     }
@@ -687,6 +712,8 @@ function openArticleEditor(id=null){
     document.getElementById('a-status').value='published';
     document.getElementById('a-published-at').value=new Date().toISOString().split('T')[0];
     document.getElementById('a-body-editor').innerHTML='';
+    document.getElementById('a-image-url').value='';
+    document.getElementById('a-thumb-preview').style.display='none';
     document.getElementById('a-hero-toggle').classList.remove('on');
   }
   switchEditorTab('edit');
@@ -708,6 +735,7 @@ async function saveArticle(){
     status:document.getElementById('a-status').value,
     excerpt:document.getElementById('a-excerpt').value.trim(),
     body:document.getElementById('a-body-editor').innerHTML.trim(),
+    image_url:document.getElementById('a-image-url').value.trim()||null,
     is_hero:heroIsOn,
   };
   if(!payload.title){toast('제목을 입력해주세요',true);return;}
@@ -778,8 +806,8 @@ async function loadLiquors(){
     <td>${'●'.repeat(l.acid||0)}${'○'.repeat(5-(l.acid||0))}</td>
     <td>${'●'.repeat(l.body||0)}${'○'.repeat(5-(l.body||0))}</td>
     <td><div style="display:flex;gap:6px">
-      <button class="btn btn-outline btn-sm" onclick="openLiquorModal('${l.id}')"><i class="ti ti-pencil"></i></button>
-      <button class="btn btn-danger btn-sm" onclick="confirmDelete('liquors','${l.id}','${l.name.replace(/'/g,"\\'")}')"><i class="ti ti-trash"></i></button>
+      <button class="btn btn-outline btn-sm" onclick="openLiquorModal('${l.id}')">✎</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('liquors','${l.id}','${l.name.replace(/'/g,"\\'")}')">✕</button>
     </div></td>
   </tr>`).join('');
 }
@@ -855,8 +883,8 @@ async function loadPairings(){
     <td style="font-size:13px">${p.match_liquor}</td>
     <td style="font-size:11px;color:var(--mid)">${p.attrs}</td>
     <td><div style="display:flex;gap:6px">
-      <button class="btn btn-outline btn-sm" onclick="openPairingModal('${p.id}')"><i class="ti ti-pencil"></i></button>
-      <button class="btn btn-danger btn-sm" onclick="confirmDelete('food_pairings','${p.id}','${p.food_name}')"><i class="ti ti-trash"></i></button>
+      <button class="btn btn-outline btn-sm" onclick="openPairingModal('${p.id}')">✎</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('food_pairings','${p.id}','${p.food_name}')">✕</button>
     </div></td>
   </tr>`).join('');
 }
@@ -909,14 +937,14 @@ async function loadWeekly(){
   const wrap=document.getElementById('weekly-list');
   wrap.innerHTML=weeklyData.map((w,i)=>`
     <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="card-title" style="margin:0">항목 ${i+1}</div><button class="btn btn-danger btn-sm" onclick="deleteWeekly('${w.id}')"><i class="ti ti-trash"></i></button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="card-title" style="margin:0">항목 ${i+1}</div><button class="btn btn-danger btn-sm" onclick="deleteWeekly('${w.id}')">✕</button></div>
       <div class="form-grid">
         <div class="form-row"><label class="form-label">날짜 라벨</label><input type="text" class="form-input" value="${w.day_label}" onchange="weeklyData[${i}].day_label=this.value"></div>
         <div class="form-row"><label class="form-label">아이콘</label><input type="text" class="form-input" value="${w.day_icon}" onchange="weeklyData[${i}].day_icon=this.value"></div>
       </div>
       <div class="form-row"><label class="form-label">페어링 이름</label><input type="text" class="form-input" value="${w.pairing_name}" onchange="weeklyData[${i}].pairing_name=this.value"></div>
       <div class="form-row"><label class="form-label">태그 설명</label><input type="text" class="form-input" value="${w.pairing_tag}" onchange="weeklyData[${i}].pairing_tag=this.value"></div>
-      <div class="btn-row"><button class="btn btn-primary btn-sm" onclick="saveWeeklyItem(${i})"><i class="ti ti-device-floppy"></i> 저장</button></div>
+      <div class="btn-row"><button class="btn btn-primary btn-sm" onclick="saveWeeklyItem(${i})">↓ 저장</button></div>
     </div>
   `).join('');
 }
@@ -1002,7 +1030,7 @@ async function loadSubscribers(){
     <td>${s.email}</td><td>${s.name||'—'}</td><td style="font-size:12px;color:var(--mid)">${s.source||'web'}</td>
     <td>${new Date(s.created_at).toLocaleDateString('ko-KR')}</td>
     <td>${s.is_active?'<span class="badge badge-published">활성</span>':'<span class="badge badge-draft">비활성</span>'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteSub('${s.id}','${s.email}')"><i class="ti ti-trash"></i></button></td>
+    <td><button class="btn btn-danger btn-sm" onclick="deleteSub('${s.id}','${s.email}')">✕</button></td>
   </tr>`).join('');
 }
 async function deleteSub(id,email){
@@ -1017,7 +1045,75 @@ function exportSubscribers(){
   toast('CSV 다운로드 완료 ✓');
 }
 
-/* ══ IMAGES ══ */
+/* ══ 에디터 이미지 삽입 ══ */
+async function insertImageInEditor(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('5MB 이하 이미지만 업로드 가능합니다', true); return; }
+  const ext = file.name.split('.').pop();
+  const path = `editor_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  toast('이미지 업로드 중...');
+  const { error } = await db.storage.from(BUCKET).upload(path, file, { upsert: false });
+  if (error) { toast('업로드 실패: ' + error.message, true); return; }
+  const url = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  const editor = document.getElementById('a-body-editor');
+  editor.focus();
+  const img = document.createElement('img');
+  img.src = url;
+  img.style.cssText = 'max-width:100%;height:auto;margin:16px 0;display:block';
+  const sel = window.getSelection();
+  if (sel.rangeCount) {
+    const range = sel.getRangeAt(0);
+    range.collapse(false);
+    range.insertNode(img);
+  } else {
+    editor.appendChild(img);
+  }
+  syncPreview();
+  toast('이미지가 삽입되었습니다 ✓');
+  input.value = '';
+}
+
+function insertImageByUrl() {
+  const url = prompt('이미지 URL을 입력하세요:');
+  if (!url) return;
+  const editor = document.getElementById('a-body-editor');
+  editor.focus();
+  const img = document.createElement('img');
+  img.src = url;
+  img.style.cssText = 'max-width:100%;height:auto;margin:16px 0;display:block';
+  const sel = window.getSelection();
+  if (sel.rangeCount) {
+    const range = sel.getRangeAt(0);
+    range.collapse(false);
+    range.insertNode(img);
+  } else {
+    editor.appendChild(img);
+  }
+  syncPreview();
+}
+
+/* ══ 아티클 썸네일 업로드 ══ */
+async function uploadArticleThumb(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('5MB 이하 이미지만 업로드 가능합니다', true); return; }
+  const ext = file.name.split('.').pop();
+  const path = `thumb_${Date.now()}.${ext}`;
+  toast('썸네일 업로드 중...');
+  const { error } = await db.storage.from(BUCKET).upload(path, file, { upsert: false });
+  if (error) { toast('업로드 실패', true); return; }
+  const url = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  document.getElementById('a-image-url').value = url;
+  const preview = document.getElementById('a-thumb-preview');
+  const img = document.getElementById('a-thumb-img');
+  img.src = url;
+  preview.style.display = 'block';
+  toast('썸네일 업로드 완료 ✓');
+  input.value = '';
+}
+
+/* ══ saveArticle에 image_url 포함 ══ */
 let imagePickerTarget=null;
 async function loadImages(){
   const {data,error}=await db.storage.from(BUCKET).list('',{limit:100,sortBy:{column:'created_at',order:'desc'}});
@@ -1025,7 +1121,7 @@ async function loadImages(){
   if(error||!data||!data.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">업로드된 이미지가 없습니다.</div>';return;}
   grid.innerHTML=data.filter(f=>f.name!=='.emptyFolderPlaceholder').map(f=>{
     const url=db.storage.from(BUCKET).getPublicUrl(f.name).data.publicUrl;
-    return `<div class="img-card"><img src="${url}" loading="lazy" alt="${f.name}"><div class="img-card-overlay"><div class="img-action" onclick="copyImgUrl('${url}')" title="URL 복사"><i class="ti ti-copy"></i></div><div class="img-action" onclick="deleteImg('${f.name}')" title="삭제" style="background:rgba(192,57,43,0.5)"><i class="ti ti-trash"></i></div></div><div class="img-card-name">${f.name}</div></div>`;
+    return `<div class="img-card"><img src="${url}" loading="lazy" alt="${f.name}"><div class="img-card-overlay"><div class="img-action" onclick="copyImgUrl('${url}')" title="URL 복사">⎘</div><div class="img-action" onclick="deleteImg('${f.name}')" title="삭제" style="background:rgba(192,57,43,0.5)">✕</div></div><div class="img-card-name">${f.name}</div></div>`;
   }).join('');
 }
 async function uploadImages(input){
@@ -1034,7 +1130,7 @@ async function uploadImages(input){
   for(const file of files){
     if(file.size>5*1024*1024){toast(`${file.name}: 5MB 초과`,true);continue;}
     const itemId='up_'+Date.now();
-    wrap.innerHTML+=`<div class="upload-item" id="${itemId}"><i class="ti ti-photo" style="font-size:18px;color:var(--mid)"></i><span style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</span><div class="upload-bar-wrap"><div class="upload-bar" id="bar_${itemId}" style="width:0%"></div></div></div>`;
+    wrap.innerHTML+=`<div class="upload-item" id="${itemId}">🖼<span style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</span><div class="upload-bar-wrap"><div class="upload-bar" id="bar_${itemId}" style="width:0%"></div></div></div>`;
     const ext=file.name.split('.').pop();
     const path=`${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
     let prog=0;const iv=setInterval(()=>{prog=Math.min(prog+15,85);const b=document.getElementById('bar_'+itemId);if(b)b.style.width=prog+'%';},120);
