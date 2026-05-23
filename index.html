@@ -189,6 +189,80 @@
     }
     #toast.show { opacity: 1; }
 
+    /* ── LOGIN MODAL ── */
+    #login-modal-bg {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 80; display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #login-modal-bg.open { display: flex; }
+
+    .login-modal {
+      width: 100%;
+      background: var(--bg);
+      padding: 32px 24px 40px;
+      border-radius: 0;
+      animation: slideUp 0.28s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .lm-title {
+      font-family: var(--serif); font-size: 22px; font-weight: 600;
+      color: var(--ink); margin-bottom: 4px;
+    }
+    .lm-sub {
+      font-size: 12px; color: var(--charcoal); font-style: italic;
+      font-family: var(--serif); margin-bottom: 28px;
+    }
+    .lm-label {
+      display: block; font-size: 10px; letter-spacing: 0.12em;
+      color: var(--charcoal); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .lm-input {
+      width: 100%; padding: 13px 14px;
+      border: 0.5px solid var(--line-strong);
+      background: var(--bg-white); font-size: 14px;
+      font-family: var(--sans); color: var(--ink);
+      outline: none; margin-bottom: 14px;
+      transition: border-color 0.15s;
+    }
+    .lm-input:focus { border-color: var(--ink); }
+    .lm-btn {
+      width: 100%; padding: 14px; background: var(--ink); color: var(--bg);
+      border: none; font-size: 14px; font-family: var(--sans);
+      letter-spacing: 0.04em; cursor: pointer;
+      transition: opacity 0.15s; margin-top: 6px;
+    }
+    .lm-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .lm-err { font-size: 12px; color: #C0392B; margin-top: 10px; text-align: center; min-height: 18px; }
+    .lm-close {
+      position: absolute; top: 16px; right: 18px;
+      font-size: 20px; color: var(--charcoal); cursor: pointer;
+      background: none; border: none;
+    }
+
+    /* 로그인된 상태 드롭다운 */
+    #user-dropdown {
+      position: absolute; top: calc(var(--header-h) + 4px); right: 16px;
+      background: var(--bg-white); border: 0.5px solid var(--line-mid);
+      padding: 8px 0; z-index: 90; display: none; min-width: 160px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    #user-dropdown.open { display: block; }
+    .ud-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; font-size: 13px; color: var(--ink);
+      cursor: pointer; transition: background 0.12s; font-family: var(--sans);
+    }
+    .ud-item:hover { background: var(--bg-soft); }
+    .ud-item i { font-size: 16px; color: var(--charcoal); }
+
     /* ══════════════════════════════
        ARTICLE DETAIL (매거진 뷰)
     ══════════════════════════════ */
@@ -495,7 +569,7 @@
     </div>
     <div class="header-right">
       <i class="ti ti-search"></i>
-      <i class="ti ti-user"></i>
+      <i class="ti ti-user" id="header-user-icon" onclick="onUserIconClick()" style="cursor:pointer"></i>
     </div>
   </div>
 
@@ -728,6 +802,32 @@
   </div>
 
   <div id="toast"></div>
+
+  <!-- ── LOGIN MODAL ── -->
+  <div id="login-modal-bg" onclick="onLoginBgClick(event)">
+    <div class="login-modal" style="position:relative">
+      <button class="lm-close" onclick="closeLoginModal()"><i class="ti ti-x"></i></button>
+      <div class="lm-title">어드민 로그인</div>
+      <div class="lm-sub">주담주담 관리자 전용</div>
+      <label class="lm-label">이메일</label>
+      <input type="email" class="lm-input" id="lm-email" placeholder="admin@judamjudam.kr">
+      <label class="lm-label">비밀번호</label>
+      <input type="password" class="lm-input" id="lm-pw" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter') doModalLogin()">
+      <button class="lm-btn" id="lm-btn" onclick="doModalLogin()">로그인</button>
+      <div class="lm-err" id="lm-err"></div>
+    </div>
+  </div>
+
+  <!-- ── USER DROPDOWN (로그인 후) ── -->
+  <div id="user-dropdown">
+    <div class="ud-item" onclick="goAdmin()">
+      <i class="ti ti-layout-dashboard"></i> 어드민 대시보드
+    </div>
+    <div class="ud-item" onclick="doModalLogout()" style="color:#C0392B">
+      <i class="ti ti-logout" style="color:#C0392B"></i> 로그아웃
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1088,7 +1188,122 @@ function resetTaste() {
 /* ── INIT ── */
 (async () => {
   await Promise.all([ loadHomeArticles(), loadFoodPairings(), loadBlog('all') ]);
+  await checkAuthState(); // 세션 복원
 })();
+
+/* ══════════════════════════════
+   AUTH — 사람 아이콘 로그인
+══════════════════════════════ */
+let isLoggedIn = false;
+
+async function checkAuthState() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    const { data: adminCheck } = await db
+      .from('admin_users').select('email')
+      .eq('email', session.user.email).single();
+    if (adminCheck) {
+      isLoggedIn = true;
+      setUserIcon(true);
+    }
+  }
+}
+
+function setUserIcon(loggedIn) {
+  const icon = document.getElementById('header-user-icon');
+  if (loggedIn) {
+    icon.className = 'ti ti-user-check';
+    icon.style.color = 'var(--ink)';
+  } else {
+    icon.className = 'ti ti-user';
+    icon.style.color = 'var(--charcoal)';
+  }
+}
+
+function onUserIconClick() {
+  if (isLoggedIn) {
+    // 드롭다운 토글
+    const dd = document.getElementById('user-dropdown');
+    dd.classList.toggle('open');
+    // 외부 클릭 시 닫기
+    setTimeout(() => {
+      document.addEventListener('click', closeDropdownOnce, { once: true });
+    }, 0);
+  } else {
+    openLoginModal();
+  }
+}
+
+function closeDropdownOnce() {
+  document.getElementById('user-dropdown').classList.remove('open');
+}
+
+function openLoginModal() {
+  document.getElementById('lm-email').value = '';
+  document.getElementById('lm-pw').value    = '';
+  document.getElementById('lm-err').textContent = '';
+  document.getElementById('login-modal-bg').classList.add('open');
+  setTimeout(() => document.getElementById('lm-email').focus(), 100);
+}
+
+function closeLoginModal() {
+  document.getElementById('login-modal-bg').classList.remove('open');
+}
+
+function onLoginBgClick(e) {
+  if (e.target === document.getElementById('login-modal-bg')) closeLoginModal();
+}
+
+async function doModalLogin() {
+  const email = document.getElementById('lm-email').value.trim();
+  const pw    = document.getElementById('lm-pw').value;
+  const btn   = document.getElementById('lm-btn');
+  const err   = document.getElementById('lm-err');
+  err.textContent = '';
+
+  if (!email || !pw) { err.textContent = '이메일과 비밀번호를 입력해주세요.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = '로그인 중...';
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pw });
+
+  if (error) {
+    err.textContent = '이메일 또는 비밀번호가 틀렸습니다.';
+    btn.disabled = false; btn.textContent = '로그인';
+    return;
+  }
+
+  // 어드민 확인
+  const { data: adminCheck } = await db
+    .from('admin_users').select('email').eq('email', email).single();
+
+  if (!adminCheck) {
+    await db.auth.signOut();
+    err.textContent = '어드민 권한이 없습니다.';
+    btn.disabled = false; btn.textContent = '로그인';
+    return;
+  }
+
+  isLoggedIn = true;
+  setUserIcon(true);
+  btn.disabled = false; btn.textContent = '로그인';
+  closeLoginModal();
+  showToast('로그인되었습니다. 어드민으로 이동합니다.');
+  setTimeout(() => { window.location.href = '/admin'; }, 1200);
+}
+
+async function doModalLogout() {
+  await db.auth.signOut();
+  isLoggedIn = false;
+  setUserIcon(false);
+  document.getElementById('user-dropdown').classList.remove('open');
+  showToast('로그아웃되었습니다.');
+}
+
+function goAdmin() {
+  window.location.href = '/admin';
+}
 </script>
 </body>
 </html>
