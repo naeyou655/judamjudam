@@ -648,9 +648,25 @@
       <div class="article-card"><div class="article-thumb skeleton"></div><div class="skeleton" style="height:9px;width:75%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:9px;width:55%"></div></div>
     </div>
     <div class="pb40"></div>
-  </div>
 
-  <!-- ── TAB 02 TASTE GUIDE ── -->
+    <!-- 뉴스레터 구독 폼 -->
+    <div style="margin:0 22px 32px;background:var(--ink);padding:24px">
+      <div style="font-family:var(--serif);font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:8px">Newsletter</div>
+      <div style="font-family:var(--serif);font-size:20px;font-weight:500;color:#fff;line-height:1.3;margin-bottom:6px">위클리 페어링,<br><em>받아보실래요?</em></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:18px;font-family:var(--sans)">매주 주담주담의 추천을 메일로 받아보세요.</div>
+      <div style="display:flex;gap:8px">
+        <input type="email" id="sub-email" placeholder="이메일 주소"
+          style="flex:1;padding:11px 14px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.2);color:#fff;font-size:13px;font-family:var(--sans);outline:none"
+          onkeydown="if(event.key==='Enter')doSubscribe()">
+        <button onclick="doSubscribe()"
+          style="padding:11px 16px;background:#fff;color:var(--ink);border:none;font-size:13px;font-family:var(--sans);cursor:pointer;white-space:nowrap;font-weight:500">
+          구독하기
+        </button>
+      </div>
+      <div id="sub-msg" style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:10px;min-height:18px;font-family:var(--sans)"></div>
+    </div>
+
+  </div><!-- /screen-home -->
   <div class="screen" id="screen-taste">
 
     <div id="step1" class="taste-wrap">
@@ -1182,26 +1198,58 @@ async function submitTaste() {
   const jujong = [...document.querySelectorAll('#jujong-chips .chip.selected')].map(c => c.textContent);
   const mood   = moodEl.querySelector('span').textContent;
   const s = tasteState.sweet, a = tasteState.acid, v = tasteState.abv;
-  const pick = PICKS.find(p => p.match(s, a, v));
 
-  document.getElementById('res-title').textContent      = pick.title;
-  document.getElementById('res-for').textContent        = 'FOR YOU · ' + pick.for;
-  document.getElementById('res-p1-cat').textContent     = pick.p1.cat;
-  document.getElementById('res-p1-name').textContent    = pick.p1.name;
-  document.getElementById('res-p1-comment').textContent = pick.p1.comment;
-  document.getElementById('res-p2-cat').textContent     = pick.p2.cat;
-  document.getElementById('res-p2-name').textContent    = pick.p2.name;
-  document.getElementById('res-p2-comment').textContent = pick.p2.comment;
+  btn.disabled = true;
+
+  // liquors DB에서 매칭
+  let pick1 = null, pick2 = null;
+  const catMap = { '막걸리':'makgeolli', '약·청주':'yakju', '증류식 소주':'distilled', '과실주':'fruit' };
+  const cats   = jujong.map(j => catMap[j]).filter(Boolean);
+
+  let query = db.from('liquors').select('*').eq('is_available', true);
+  if (cats.length) query = query.in('category', cats);
+  const { data: liquors } = await query;
+
+  if (liquors && liquors.length) {
+    // 슬라이더 값과 가장 가까운 술 2개 매칭 (거리 최소화)
+    const scored = liquors.map(l => ({
+      ...l,
+      score: Math.abs((l.sweet||3) - s) + Math.abs((l.acid||3) - a) + Math.abs((l.body||3) - v)
+    })).sort((a, b) => a.score - b.score);
+    pick1 = scored[0];
+    pick2 = scored[1] || scored[0];
+  }
+
+  // 결과 표시
+  const catLabel = { makgeolli:'막걸리', yakju:'약·청주', distilled:'증류식 소주', fruit:'과실주' };
+  const sweetLabel = ['','Bone Dry','Dry','Medium dry','Off-sweet','Sweet'];
+  const abvLabel   = ['','Silky','Light Bold','Medium Bold','Bold','Full Bold'];
+
+  document.getElementById('res-title').textContent = `${sweetLabel[s]} × ${abvLabel[v]}`;
+  document.getElementById('res-for').textContent   = 'FOR YOU · ' + mood;
+
+  if (pick1) {
+    document.getElementById('res-p1-cat').textContent     = catLabel[pick1.category] || '전통주';
+    document.getElementById('res-p1-name').textContent    = pick1.name;
+    document.getElementById('res-p1-comment').textContent = pick1.description || '';
+  }
+  if (pick2) {
+    document.getElementById('res-p2-cat').textContent     = catLabel[pick2.category] || '전통주';
+    document.getElementById('res-p2-name').textContent    = pick2.name;
+    document.getElementById('res-p2-comment').textContent = pick2.description || '';
+  }
 
   ['step1','step2','step3'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('taste-result').style.display = 'block';
   document.getElementById('screen-taste').scrollTop = 0;
 
-  btn.disabled = true;
+  // Supabase 저장
   const { error } = await db.from('taste_results').insert({
-    jujong, sweet:s, acid:a, abv:v, mood,
-    pick1_name:pick.p1.name, pick1_comment:pick.p1.comment,
-    pick2_name:pick.p2.name, pick2_comment:pick.p2.comment,
+    jujong, sweet: s, acid: a, abv: v, mood,
+    pick1_name:    pick1?.name || '',
+    pick1_comment: pick1?.description || '',
+    pick2_name:    pick2?.name || '',
+    pick2_comment: pick2?.description || '',
   });
   btn.disabled = false;
   if (!error) showToast('취향 진단 결과가 저장되었습니다 ✓');
@@ -1214,11 +1262,58 @@ function resetTaste() {
   gotoStep(1);
 }
 
-/* ── INIT ── */
+/* ── 뉴스레터 구독 ── */
+async function doSubscribe() {
+  const email = document.getElementById('sub-email').value.trim();
+  const msg   = document.getElementById('sub-msg');
+  if (!email || !email.includes('@')) { msg.textContent = '올바른 이메일을 입력해주세요.'; return; }
+
+  const { error } = await db.from('subscribers').insert({ email, source: 'web_home' });
+  if (error) {
+    if (error.code === '23505') {
+      msg.textContent = '이미 구독 중인 이메일입니다.';
+    } else {
+      msg.textContent = '오류가 발생했습니다. 다시 시도해주세요.';
+    }
+    return;
+  }
+  document.getElementById('sub-email').value = '';
+  msg.style.color = '#fff';
+  msg.textContent = '구독해주셔서 감사합니다 🍶';
+  setTimeout(() => { msg.textContent = ''; }, 4000);
+}
 (async () => {
   await Promise.all([ loadHomeArticles(), loadFoodPairings(), loadBlog('all') ]);
-  await checkAuthState(); // 세션 복원
+  await checkAuthState();
+  trackPageView('/'); // 방문자 트래킹
 })();
+
+/* ── 페이지뷰 트래킹 ── */
+function trackPageView(path, tab = null) {
+  db.from('page_views').insert({
+    path,
+    tab,
+    referrer: document.referrer || null,
+    user_agent: navigator.userAgent,
+    session_id: getSessionId(),
+  }).then(() => {});
+}
+
+function getSessionId() {
+  let sid = sessionStorage.getItem('jd_sid');
+  if (!sid) {
+    sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    sessionStorage.setItem('jd_sid', sid);
+  }
+  return sid;
+}
+
+// 탭 전환 시 트래킹
+const _origSwitchTab = switchTab;
+function switchTab(name) {
+  _origSwitchTab(name);
+  trackPageView('/', name);
+}
 
 /* ══════════════════════════════
    AUTH — 사람 아이콘 로그인
