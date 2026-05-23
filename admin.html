@@ -380,6 +380,21 @@
         <div class="form-row"><label class="form-label">히어로 제목</label><input type="text" class="form-input" id="set-hero-title"></div>
         <div class="form-row"><label class="form-label">히어로 부제</label><input type="text" class="form-input" id="set-hero-sub"></div>
         <div class="form-row"><label class="form-label">헤더 날짜 표기</label><input type="text" class="form-input" id="set-header-date" placeholder="may 2026"></div>
+        <div class="form-row">
+          <label class="form-label">히어로 배너 우측 이미지</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" class="form-input" id="set-hero-image" placeholder="이미지 URL" style="margin:0">
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;flex-shrink:0">
+              ↑ 업로드
+              <input type="file" accept="image/*" style="display:none" onchange="uploadHeroImage(this)">
+            </label>
+            <button class="btn btn-outline btn-sm" onclick="openImagePicker('set-hero-image')" style="flex-shrink:0">🖼 선택</button>
+          </div>
+          <div id="hero-img-preview" style="margin-top:10px;display:none">
+            <img id="hero-img-preview-img" src="" style="width:120px;height:80px;object-fit:cover;border:0.5px solid var(--line-mid)">
+            <button onclick="clearHeroImage()" style="display:block;margin-top:6px;font-size:12px;color:var(--red);background:none;border:none;cursor:pointer">이미지 제거</button>
+          </div>
+        </div>
         <div class="btn-row"><button class="btn btn-primary" onclick="saveSettings()">↓ 저장</button></div>
       </div>
     </div>
@@ -498,9 +513,23 @@
       <div class="form-row"><label class="form-label">안주명</label><input type="text" class="form-input" id="p-food-name" placeholder="교촌 허니콤보"></div>
       <div class="form-row"><label class="form-label">부제 (영문)</label><input type="text" class="form-input" id="p-food-sub" placeholder="Sweet · Greasy"></div>
     </div>
+    <div class="form-row">
+      <label class="form-label">음식 이미지</label>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <input type="text" class="form-input" id="p-image-url" placeholder="이미지 URL" style="margin:0">
+        <label class="btn btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;flex-shrink:0">
+          ↑ 업로드
+          <input type="file" accept="image/*" style="display:none" onchange="uploadPairingImage(this)">
+        </label>
+        <button class="btn btn-outline btn-sm" onclick="openImagePicker('p-image-url')" style="flex-shrink:0">🖼 선택</button>
+      </div>
+      <div id="p-img-preview" style="margin-top:8px;display:none">
+        <img id="p-img-preview-img" src="" style="width:80px;height:60px;object-fit:cover;border:0.5px solid var(--line-mid)">
+      </div>
+    </div>
     <div class="form-grid">
-      <div class="form-row"><label class="form-label">아이콘 클래스</label><input type="text" class="form-input" id="p-icon" placeholder="ti-flame"></div>
       <div class="form-row"><label class="form-label">노출 순서</label><input type="number" class="form-input" id="p-sort" value="1" min="1"></div>
+      <div class="form-row"><label class="form-label">아이콘 클래스 (선택)</label><input type="text" class="form-input" id="p-icon" placeholder="이미지 없을 때만 사용"></div>
     </div>
     <div class="form-row"><label class="form-label">매칭 우리술</label><input type="text" class="form-input" id="p-match" placeholder="탄산 막걸리 / 드라이 청주"></div>
     <div class="form-row"><label class="form-label">맛 속성</label><input type="text" class="form-input" id="p-attrs" placeholder="지방맛 HIGH · 단맛 MID"></div>
@@ -902,10 +931,18 @@ function openPairingModal(id=null){
       document.getElementById('p-match').value=p.match_liquor||'';
       document.getElementById('p-attrs').value=p.attrs||'';
       document.getElementById('p-reason').value=p.reason||'';
+      document.getElementById('p-image-url').value=p.image_url||'';
+      if(p.image_url){
+        document.getElementById('p-img-preview-img').src=p.image_url;
+        document.getElementById('p-img-preview').style.display='block';
+      } else {
+        document.getElementById('p-img-preview').style.display='none';
+      }
     }
   } else {
-    ['p-food-name','p-food-sub','p-icon','p-match','p-attrs','p-reason'].forEach(id=>document.getElementById(id).value='');
+    ['p-food-name','p-food-sub','p-icon','p-match','p-attrs','p-reason','p-image-url'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('p-sort').value=pairingsData.length+1;
+    document.getElementById('p-img-preview').style.display='none';
   }
   document.getElementById('pairing-modal').classList.add('open');
 }
@@ -919,6 +956,7 @@ async function savePairing(){
     match_liquor:document.getElementById('p-match').value.trim(),
     attrs:document.getElementById('p-attrs').value.trim(),
     reason:document.getElementById('p-reason').value.trim(),
+    image_url:document.getElementById('p-image-url').value.trim()||null,
   };
   if(!payload.food_name){toast('안주명을 입력해주세요',true);return;}
   let error;
@@ -1045,7 +1083,71 @@ function exportSubscribers(){
   toast('CSV 다운로드 완료 ✓');
 }
 
-/* ══ 에디터 이미지 삽입 ══ */
+/* ══ 안주 페어링 이미지 업로드 ══ */
+async function uploadPairingImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('5MB 이하 이미지만 업로드 가능합니다', true); return; }
+  const ext = file.name.split('.').pop();
+  const path = `pairing_${Date.now()}.${ext}`;
+  toast('이미지 업로드 중...');
+  const { error } = await db.storage.from(BUCKET).upload(path, file, { upsert: false });
+  if (error) { toast('업로드 실패', true); return; }
+  const url = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  document.getElementById('p-image-url').value = url;
+  const preview = document.getElementById('p-img-preview');
+  document.getElementById('p-img-preview-img').src = url;
+  preview.style.display = 'block';
+  toast('이미지 업로드 완료 ✓');
+  input.value = '';
+}
+
+/* ══ 히어로 이미지 업로드 ══ */
+async function uploadHeroImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { toast('10MB 이하 이미지만 업로드 가능합니다', true); return; }
+  const ext = file.name.split('.').pop();
+  const path = `hero_${Date.now()}.${ext}`;
+  toast('히어로 이미지 업로드 중...');
+  const { error } = await db.storage.from(BUCKET).upload(path, file, { upsert: false });
+  if (error) { toast('업로드 실패', true); return; }
+  const url = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  document.getElementById('set-hero-image').value = url;
+  document.getElementById('hero-img-preview-img').src = url;
+  document.getElementById('hero-img-preview').style.display = 'block';
+  toast('히어로 이미지 업로드 완료 ✓');
+  input.value = '';
+}
+
+function clearHeroImage() {
+  document.getElementById('set-hero-image').value = '';
+  document.getElementById('hero-img-preview').style.display = 'none';
+}
+
+/* ══ 이미지 URL 입력 시 미리보기 자동 갱신 ══ */
+document.addEventListener('DOMContentLoaded', () => {
+  const pImgUrl = document.getElementById('p-image-url');
+  if (pImgUrl) {
+    pImgUrl.addEventListener('input', function() {
+      const url = this.value.trim();
+      const preview = document.getElementById('p-img-preview');
+      const img = document.getElementById('p-img-preview-img');
+      if (url) { img.src = url; preview.style.display = 'block'; }
+      else { preview.style.display = 'none'; }
+    });
+  }
+  const heroImgUrl = document.getElementById('set-hero-image');
+  if (heroImgUrl) {
+    heroImgUrl.addEventListener('input', function() {
+      const url = this.value.trim();
+      const preview = document.getElementById('hero-img-preview');
+      const img = document.getElementById('hero-img-preview-img');
+      if (url) { img.src = url; preview.style.display = 'block'; }
+      else { preview.style.display = 'none'; }
+    });
+  }
+});
 async function insertImageInEditor(input) {
   const file = input.files[0];
   if (!file) return;
@@ -1180,12 +1282,18 @@ async function loadSettings(){
   document.getElementById('set-hero-title').value=map['hero_title']||'';
   document.getElementById('set-hero-sub').value=map['hero_sub']||'';
   document.getElementById('set-header-date').value=map['header_date']||'';
+  document.getElementById('set-hero-image').value=map['hero_image']||'';
+  if(map['hero_image']){
+    document.getElementById('hero-img-preview-img').src=map['hero_image'];
+    document.getElementById('hero-img-preview').style.display='block';
+  }
 }
 async function saveSettings(){
   const entries=[
     {key:'hero_title',value:document.getElementById('set-hero-title').value.trim()},
     {key:'hero_sub',value:document.getElementById('set-hero-sub').value.trim()},
     {key:'header_date',value:document.getElementById('set-header-date').value.trim()},
+    {key:'hero_image',value:document.getElementById('set-hero-image').value.trim()},
   ];
   for(const e of entries){await db.from('app_settings').upsert({key:e.key,value:e.value,updated_at:new Date().toISOString()});}
   toast('설정이 저장되었습니다 ✓');
