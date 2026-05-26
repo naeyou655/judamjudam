@@ -1,9 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { db } from '../lib/supabase'
+import type { TossUser } from '../App'
 
 interface Props {
   active: boolean
   showToast: (msg: string) => void
+  tossUser: TossUser | null
+  tasteReady: boolean
+  onTasteReady: () => void
+  onLoginRequired: () => void
 }
 
 const SWEET = ['', 'Bone Dry', 'Dry', 'Medium dry', 'Off-sweet', 'Sweet']
@@ -13,7 +18,7 @@ const CAT_LABEL: Record<string, string> = {
   makgeolli: '막걸리', yakju: '약·청주', distilled: '증류식 소주', fruit: '과실주',
 }
 
-export default function TasteScreen({ active, showToast }: Props) {
+export default function TasteScreen({ active, showToast, tossUser, tasteReady, onTasteReady, onLoginRequired }: Props) {
   const [step, setStep] = useState(1)
   const [jujong, setJujong] = useState<string[]>([])
   const [sweet, setSweet] = useState(3)
@@ -24,31 +29,41 @@ export default function TasteScreen({ active, showToast }: Props) {
   const [pick1, setPick1] = useState<any>(null)
   const [pick2, setPick2] = useState<any>(null)
 
+  // 최신 state를 ref로 추적
+  const stateRef = useRef({ sweet, acid, abv, mood, jujong })
+  useEffect(() => { stateRef.current = { sweet, acid, abv, mood, jujong } }, [sweet, acid, abv, mood, jujong])
+
+  // 로그인 후 자동 실행
+  useEffect(() => {
+    if (tasteReady) {
+      onTasteReady()
+      const s = stateRef.current
+      if (s.mood) runTaste(s.sweet, s.acid, s.abv, s.mood, s.jujong)
+    }
+  }, [tasteReady])
+
   const toggleJujong = (j: string) => {
     setJujong(prev => prev.includes(j) ? prev.filter(x => x !== j) : [...prev, j])
   }
 
-  const submitTaste = async () => {
-    if (!mood) { showToast('무드를 하나 선택해 주세요'); return }
+  const runTaste = async (s: number, a: number, v: number, m: string, j: string[]) => {
     setLoading(true)
     const catMap: Record<string, string> = {
       '막걸리': 'makgeolli', '약·청주': 'yakju', '증류식 소주': 'distilled', '과실주': 'fruit',
     }
-    const cats = jujong.map(j => catMap[j]).filter(Boolean)
+    const cats = j.map(x => catMap[x]).filter(Boolean)
     let q = db.from('liquors').select('*').eq('is_available', true)
     if (cats.length) q = (q as any).in('category', cats)
     const { data: liquors } = await q
     if (liquors && liquors.length) {
       const scored = liquors
-        .map((l: any) => ({ ...l, score: Math.abs((l.sweet||3)-sweet) + Math.abs((l.acid||3)-acid) + Math.abs((l.body||3)-abv) }))
-        .sort((a: any, b: any) => a.score - b.score)
+        .map((l: any) => ({ ...l, score: Math.abs((l.sweet||3)-s) + Math.abs((l.acid||3)-a) + Math.abs((l.body||3)-v) }))
+        .sort((x: any, y: any) => x.score - y.score)
       setPick1(scored[0] || null)
-      // Pick2는 Pick1과 다른 술만 — 없으면 null
       const p2 = scored.find((l: any) => l.id !== scored[0]?.id)
       setPick2(p2 || null)
-
       await db.from('taste_results').insert({
-        jujong, sweet, acid, abv, mood,
+        jujong: j, sweet: s, acid: a, abv: v, mood: m,
         pick1_name: scored[0]?.name || '',
         pick1_comment: scored[0]?.description || '',
         pick2_name: p2?.name || '',
@@ -59,12 +74,23 @@ export default function TasteScreen({ active, showToast }: Props) {
     setStep(4)
   }
 
+  const submitTaste = async () => {
+    if (!mood) { showToast('무드를 하나 선택해 주세요'); return }
+    const savedUser = localStorage.getItem('toss_user')
+    if (!savedUser && !tossUser) { onLoginRequired(); return }
+    runTaste(sweet, acid, abv, mood, jujong)
+  }
+
   const reset = () => {
     setStep(1); setJujong([]); setSweet(3); setAcid(2); setAbv(2)
     setMood(''); setPick1(null); setPick2(null)
   }
 
   if (!active) return null
+
+  const stepAnim: React.CSSProperties = {
+    animation: 'stepFadeSlide 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+  }
 
   const pipStyle = (n: number) => ({
     flex: 1, height: 2,
@@ -85,7 +111,7 @@ export default function TasteScreen({ active, showToast }: Props) {
 
       {/* STEP 1 */}
       {step === 1 && (
-        <div style={{ padding: '26px 22px' }}>
+        <div style={{ padding: '26px 22px', ...stepAnim }}>
           <div style={{ display: 'flex', gap: 6, marginBottom: 26 }}>
             <div style={pipStyle(1)}/><div style={pipStyle(2)}/><div style={pipStyle(3)}/>
           </div>
@@ -106,7 +132,7 @@ export default function TasteScreen({ active, showToast }: Props) {
 
       {/* STEP 2 */}
       {step === 2 && (
-        <div style={{ padding: '26px 22px' }}>
+        <div style={{ padding: '26px 22px', ...stepAnim }}>
           <div style={{ display: 'flex', gap: 6, marginBottom: 26 }}>
             <div style={pipStyle(1)}/><div style={pipStyle(2)}/><div style={pipStyle(3)}/>
           </div>
@@ -140,7 +166,7 @@ export default function TasteScreen({ active, showToast }: Props) {
 
       {/* STEP 3 */}
       {step === 3 && (
-        <div style={{ padding: '26px 22px' }}>
+        <div style={{ padding: '26px 22px', ...stepAnim }}>
           <div style={{ display: 'flex', gap: 6, marginBottom: 26 }}>
             <div style={pipStyle(1)}/><div style={pipStyle(2)}/><div style={pipStyle(3)}/>
           </div>
@@ -178,7 +204,7 @@ export default function TasteScreen({ active, showToast }: Props) {
 
       {/* RESULT */}
       {step === 4 && (
-        <div style={{ paddingBottom: 40 }}>
+        <div style={{ paddingBottom: 40, ...stepAnim }}>
           <div style={{ background: 'var(--bg-soft)', padding: '22px 22px 18px', borderBottom: '1px solid var(--line)' }}>
             <div style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--charcoal)', textTransform: 'uppercase', fontStyle: 'italic', fontFamily: 'var(--serif)', marginBottom: 6 }}>진단 결과 · RESULT</div>
             <div style={{ fontFamily: 'var(--sans)', fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 4, letterSpacing: '-0.4px' }}>

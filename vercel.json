@@ -3,6 +3,7 @@
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/api/toss-login", "destination": "/api/toss-login.js" },
     { "source": "/", "destination": "/index.html" }
   ],
   "headers": [

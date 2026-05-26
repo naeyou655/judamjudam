@@ -1,9 +1,10 @@
 interface Props {
   isLoggedIn: boolean
+  userName?: string
   onUserClick: () => void
 }
 
-export default function Header({ isLoggedIn, onUserClick }: Props) {
+export default function Header({ isLoggedIn, userName, onUserClick }: Props) {
   return (
     <div style={{
       height: 'var(--header-h)', background: 'var(--bg)',
