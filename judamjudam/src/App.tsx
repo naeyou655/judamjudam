@@ -118,17 +118,18 @@ export default function App() {
     setTossUser(user)
     localStorage.setItem('toss_user', JSON.stringify(user))
     setShowLogin(false)
-    showToast(`안녕하세요, ${user.name || ''}님!`)
     const action = pendingAction.current
     pendingAction.current = null
     if (!action) return
-    if (action.type === 'article') {
-      setSelectedArticle(action.article)
-      setArticleVisible(true)
-    }
-    if (action.type === 'taste') {
-      setTasteReady(true)
-    }
+    setTimeout(() => {
+      if (action.type === 'article') {
+        setSelectedArticle(action.article)
+        setTimeout(() => setArticleVisible(true), 50)
+      }
+      if (action.type === 'taste') {
+        setTasteReady(true)
+      }
+    }, 100)
   }
 
   const doLogout = () => {
